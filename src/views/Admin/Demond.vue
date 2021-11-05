@@ -45,7 +45,6 @@ export default {
 				cancelButtonText: "取消",
 				type: "warning",
 			  }).then(() => {
-                console.log(this.$api_router.login)
                 this.$message({
                     message: '提交成功',
                     type: 'success'

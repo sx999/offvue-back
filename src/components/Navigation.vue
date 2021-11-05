@@ -35,9 +35,9 @@
  					 <el-menu-item index="1-1">测试2-2</el-menu-item>
 					 <el-menu-item index="1-3r">测试2-3</el-menu-item>
  			  </el-submenu>
-            <el-menu-item index="2">
+            <el-menu-item index="/expert">
                 <i class="el-icon-s-promotion"></i>
-                <span slot="title">测试3</span>
+                <span slot="title">专家顾问</span>
             </el-menu-item>
             <el-menu-item index="3">
                 <i class="el-icon-s-promotion"></i>

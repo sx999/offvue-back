@@ -6,6 +6,7 @@ import VueRouter from 'vue-router'
 import Index from '../views/Admin/Index'
 import Home from '../views/Admin/Home'
 import Demond from '../views/Admin/Demond'
+import Expert from '../views/Admin/Expert'
 
 //404页面
 import NoMatch from '../views/Admin/NoMatch'
@@ -27,7 +28,9 @@ const routes = [
     children:[
       {path:"home",component:Home},
       {path:"",redirect:"home"},    //没有输入值时 重定向到home 页面
-      {path:"demond",component:Demond}
+      {path:"demond",component:Demond},
+      {path:"expert",component:Expert}
+      
     ]
   },
   //登录
