@@ -45,11 +45,12 @@ export default {
 				cancelButtonText: "取消",
 				type: "warning",
 			  }).then(() => {
+                console.log(this.$api_router.login)
                 this.$message({
                     message: '提交成功',
                     type: 'success'
-                 });
-				 console.log(this.content)
+                });
+				console.log(this.content)
 			  });
             
 			},
@@ -64,9 +65,7 @@ export default {
 }
 </script>
 <style scoped>
-    .ql-container{
-        height: 300px !important;
-    }
+   
     .butclass{
         width: 100%;
         height: 60px;
