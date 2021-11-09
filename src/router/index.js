@@ -7,7 +7,19 @@ import Index from '../views/Admin/Index'
 import Home from '../views/Admin/Home'
 import Demond from '../views/Admin/Demond'
 import Expert from '../views/Admin/Expert'
+import Mission from '../views/Admin/Mission'
+import Events from '../views/Admin/Events/index'
+import Members from '../views/Admin/Members'
+import Contact from '../views/Admin/Contact'
+import TradeNews from '../views/Admin/TradeNews'
+import Project from '../views/Admin/Project'
 
+// 图片处理
+import Picture from '../views/Admin/Picture/index'
+
+//子页面
+import Competition from '../views/Admin/Events/Competition.vue'
+import Activity from '../views/Admin/Events/Activity.vue'
 //404页面
 import NoMatch from '../views/Admin/NoMatch'
 //登录
@@ -29,7 +41,20 @@ const routes = [
       {path:"home",component:Home},
       {path:"",redirect:"home"},    //没有输入值时 重定向到home 页面
       {path:"demond",component:Demond},
-      {path:"expert",component:Expert}
+      {path:"expert",component:Expert},
+      {path:"mission",component:Mission},
+      {path:"events",component:Events,
+        children:[
+          {path:"competition",component:Competition},
+          {path:"activity",component:Activity},
+          {path:"",redirec:'competition'}
+        ]
+      },
+      {path:"picture",component:Picture},
+      {path:"members",component:Members},
+      {path:"contact",component:Contact},
+      {path:"tradenews",component:TradeNews},
+      {path:"project",component:Project},
       
     ]
   },
@@ -55,8 +80,8 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
+  // mode: 'history',
+  // base: process.env.BASE_URL,
   routes
 })
  //路由守卫 

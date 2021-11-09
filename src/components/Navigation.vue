@@ -26,22 +26,41 @@
                 <i class="el-icon-s-promotion"></i>
                 <span slot="title">测试1</span>
             </el-menu-item>
-            <el-submenu index="1">
- 			      <template slot="title">
- 			        <i class="el-icon-user-solid"></i>
- 			        <span slot="title">测试2</span>
- 			      </template>
- 					 <el-menu-item index="1-1">测试2-1</el-menu-item>
- 					 <el-menu-item index="1-1">测试2-2</el-menu-item>
-					 <el-menu-item index="1-3r">测试2-3</el-menu-item>
- 			  </el-submenu>
+            <el-menu-item index="/picture">
+                <i class="el-icon-picture"></i>
+                <span slot="title">图片处理</span>
+            </el-menu-item>
             <el-menu-item index="/expert">
-                <i class="el-icon-s-promotion"></i>
+                <i class="el-icon-s-custom"></i>
                 <span slot="title">专家顾问</span>
             </el-menu-item>
-            <el-menu-item index="3">
+            <el-menu-item index="/mission">
                 <i class="el-icon-s-promotion"></i>
-                <span slot="title">测试4</span>
+                <span slot="title">公司使命</span>
+            </el-menu-item>
+            <el-submenu index="/events">
+                <template slot="title">
+                <i class="el-icon-s-claim"></i>
+                <span slot="title">活动/赛事</span>
+                </template>
+                    <el-menu-item index="/events/competition">赛事</el-menu-item>
+                    <el-menu-item index="/events/activity">活动</el-menu-item>
+ 			</el-submenu>
+            <el-menu-item index="/members">
+                <i class="el-icon-user-solid"></i>
+                <span slot="title">成员介绍</span>
+            </el-menu-item>
+             <el-menu-item index="/contact">
+                <i class="el-icon-phone"></i>
+                <span slot="title">联系方式</span>
+            </el-menu-item>
+             <el-menu-item index="/tradenews">
+                <i class="el-icon-s-opportunity"></i>
+                <span slot="title">行业新闻</span>
+            </el-menu-item>
+            <el-menu-item index="/project">
+                <i class="el-icon-s-management"></i>
+                <span slot="title">项目专栏</span>
             </el-menu-item>
         </el-menu>
     </el-aside>

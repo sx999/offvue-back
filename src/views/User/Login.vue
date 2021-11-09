@@ -43,21 +43,65 @@
         data(){
             return{
 				formLabelAlign:{
-					usernmae:"",
+					username:"",
 					password:"",
 				}
             }
         },
         created(){
-            
+			
         },
+		mounted(){
+			// 绑定监听事件
+			 window.addEventListener("keydown", this.keyDown);
+		},
+		destroyed() {
+		    // 销毁事件
+		    window.removeEventListener("keydown", this.keyDown, false);
+		},
         methods:{
 				SignUp(){
 					console.log(this.formLabelAlign.username,this.formLabelAlign.password)
-				}
+					if(this.formLabelAlign.username!= "" && this.formLabelAlign.password != ""){
+						this.axios.post(this.$api_router.login+'?adminAccount='+this.formLabelAlign.username+'&adminPassword='+this.formLabelAlign.password)
+						.then(res=>{
+							console.log(res)
+							if(res.data.code==200){
+								// this.$message({
+								// 	showClose: true,
+								// 	offset: 60,
+								// 	message: '登录成功',
+								// 	type: 'success',
+								// 	duration: 600,
+								// });
+								// this.$router.push({path:"/"})
+							}
+							else{
+								this.$message({
+									message: res.data.msg,
+									type: 'warning',
+									// center: true
+								});
+							}
+						})
+					}else{
+						 this.$message({
+						  message: '输入不完整',
+						  type: 'warning',
+						//   center: true
+						});
+					}
+					
+				},
+				keyDown(e){
+				// 回车则执行登录方法 enter键的ASCII是13	
+					if (e.keyCode === 13) {
+						this.SignUp(); // 定义的登录方法
+					}
+				},
         }
     }
 </script>
-<style scoped>
+<style scoped='scoped'>
 	@import "../../assets/css/login.css";
 </style>

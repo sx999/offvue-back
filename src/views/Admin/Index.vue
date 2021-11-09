@@ -14,9 +14,9 @@
                 <router-view/>
               </el-main>
               <!-- 底部样式 -->
-              <el-footer class="bottom">
+              <!-- <el-footer class="bottom">
                 底部
-              </el-footer>
+              </el-footer> -->
           </el-container>
         </el-container>
     </div>
@@ -62,7 +62,9 @@ export default {
       margin-top: 30px;
       margin-left: 30px;
       border-radius: 4px 0;
-      background-color: #dbe6f6;
+      /* background-color: #dbe6f6; */
+      background-color: #FFFFFF;
+      box-shadow: 0px 0px 4px #333;
       overflow-y: hidden;
           /* background: linear-gradient(to right, rgb(26, 41, 128), rgb(38, 208, 206)); */
     }

@@ -14,7 +14,6 @@
                 @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                 @change="onEditorChange($event)">
             </quill-editor>
-           
         </el-card>
           <!-- <Editor v-model="article.content"/> -->
     </div>
