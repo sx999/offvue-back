@@ -61,7 +61,6 @@ export default {
             loading:false, //加载动画
             // dialogVisible:false,  //详情框
             // information:{},  //详情页存放数据
-            titleinput:"",
             tableData: [{
                 id:'1',
                 date: '2016-05-02',
