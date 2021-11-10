@@ -17,7 +17,10 @@ Vue.use(VueQuillEditor);
 
 import  Editor from './components/Editor';
 Vue.component("Editor",Editor);
-
+//时间格式组件
+import Moment from 'moment'
+Vue.prototype.moment = Moment
+//axios
 import axios from 'axios'
 Vue.prototype.axios = axios;    //全局注册，
 

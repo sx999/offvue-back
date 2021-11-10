@@ -24,36 +24,10 @@
                 <el-upload
                 action="#"
                 list-type="picture-card"
+                :on-preview="handlePictureCardPreview"
+                :on-remove="handleRemove"
                 :auto-upload="false">
-                    <i slot="default" class="el-icon-plus"></i>
-                    <div slot="file" slot-scope="{file}">
-                    <img
-                        class="el-upload-list__item-thumbnail"
-                        :src="file.url" alt=""
-                    >
-                    <span class="el-upload-list__item-actions">
-                        <span
-                        class="el-upload-list__item-preview"
-                        @click="handlePictureCardPreview(file)"
-                        >
-                        <i class="el-icon-zoom-in"></i>
-                        </span>
-                        <span
-                        v-if="!disabled"
-                        class="el-upload-list__item-delete"
-                        @click="handleDownload(file)"
-                        >
-                        <i class="el-icon-download"></i>
-                        </span>
-                        <span
-                        v-if="!disabled"
-                        class="el-upload-list__item-delete"
-                        @click="handleRemove(file)"
-                        >
-                        <i class="el-icon-delete"></i>
-                        </span>
-                    </span>
-                    </div>
+                    <i class="el-icon-plus"></i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible">
                     <img width="100%" :src="dialogImageUrl" alt="">
@@ -85,17 +59,12 @@ export default {
         return{
             dialogImageUrl: '',
             dialogVisible: false,
-            disabled: false,
-            content:null,
+            content:null, //富文本
             editorOption: {},
             ruleForm: {
                 name: '',
                 region: '1',
                 date: '',
-                delivery: false,
-                type: [],
-                resource: '',
-                desc: ''
             },
             rules: {
                 name: [
@@ -109,17 +78,12 @@ export default {
         }
     },
     methods:{
-        handleRemove(file) {
-            console.log(file);
-            this.dialogImageUrl = "";
-            this.dialogVisible = false
+        handleRemove(file,fileList) {
+            console.log(file,fileList);
         },
         handlePictureCardPreview(file) {
             this.dialogImageUrl = file.url;
             this.dialogVisible = true;
-        },
-        handleDownload(file) {
-            console.log(file);
         },
         Submit(){
               this.$confirm("您确定要提交吗?", "提示", {
@@ -147,7 +111,6 @@ export default {
 <style>
     .Mission-box{
         font-size: 13px !important;
-
         /* background-color: #FFFFFF; */
     }
     .Mission-box .el-form-item{

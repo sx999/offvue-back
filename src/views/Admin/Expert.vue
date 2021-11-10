@@ -13,7 +13,7 @@ export default {
         }
     },
     created(){
-        this.axios.post(this.$api_router.expertfindAll)
+        this.axios.post(this.$api_router.expertfindAll+"findAll")
         .then(res=>{
             console.log(res)
             this.list =  res.data.data

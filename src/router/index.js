@@ -13,7 +13,7 @@ import Members from '../views/Admin/Members'
 import Contact from '../views/Admin/Contact'
 import TradeNews from '../views/Admin/TradeNews'
 import Project from '../views/Admin/Project'
-
+import Operator from '../views/Admin/Operator'
 // 图片处理
 import Picture from '../views/Admin/Picture/index'
 
@@ -55,7 +55,8 @@ const routes = [
       {path:"contact",component:Contact},
       {path:"tradenews",component:TradeNews},
       {path:"project",component:Project},
-      
+      //修改/添加页面集合
+      {path:"operator",name:"Operator",component:Operator},
     ]
   },
   //登录

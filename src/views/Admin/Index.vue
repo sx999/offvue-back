@@ -61,6 +61,7 @@ export default {
       width: 98%;
       margin-top: 30px;
       margin-left: 30px;
+      padding: 10px 20px;
       border-radius: 4px 0;
       /* background-color: #dbe6f6; */
       background-color: #FFFFFF;
