@@ -61,13 +61,46 @@
         </div>
         <!-- 编辑框 -->
         <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="42%">
-            <div>
-                <p>图片修改</p>
-                <img class="compileImg" :src="information.rotationUrl" alt=""> 
+            <div class="compileImg">
+                <!-- 修改 -->
+                <div class="oldimgD"  v-if="detail==1">
+                    <p>原图:</p>
+                    <img class="imgold" :src="information.rotationUrl" alt=""> 
+                </div>
+                <!-- 添加 -->
+                <div class="AddImg" v-if="detail==2">
+                    <div class="flex">
+                        <p>图片类别</p>
+                        <el-select v-model="ruleForm.rotationName" placeholder="请选择图片分类">
+                            <el-option label="首页" value="1"></el-option>
+                            <el-option label="新闻动态" value="2"></el-option>
+                            <el-option label="赛事活动" value="3"></el-option>
+                            <el-option label="专家顾问" value="4"></el-option>
+                            <el-option label="文创商城" value="5"></el-option>
+                            <el-option label="关于我们" value="6"></el-option>
+                        </el-select>
+                    </div>
+                </div>
+                <!-- 上传图片 -->
+                <div class="form-group">
+                    <label class="control-label">上传图片</label>
+                    <span class="help-block">(建议图片格式为：JPG/PNG/JPEG)</span>
+                    <div class="control-form">
+                        <input type="file" class="upload" @change="updateFace($event)" ref="inputer" multiple accept="image/png,image/jpeg,image/jpg"/>
+                    </div>
+                    <!-- 预览 -->
+                    <div class="mart20">
+                        <el-link type="success" :underline="false" :href="newImg"  target="_blank"  >
+						    <img :src="newImg" width="200">
+				        </el-link>
+                    </div>
+                    
+                </div>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="dialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="Affirm()">确 定</el-button>
+                <el-button @click="close()">取 消</el-button>
+                <el-button type="primary" @click="Affirm()" v-if="detail==1">确 定</el-button>
+                <el-button type="primary" @click="Affirm1()" v-if="detail==2">确 定</el-button>
             </span>
 		</el-dialog>
     </div>
@@ -78,13 +111,19 @@ export default {
         return{
             loading:false, //加载动画
             dialogVisible:false, //编辑框
-            dialogImageUrl: '',
-            dialogVisible1: false,
             information:{},
             tableData:[],
             search:{
                 region:''
             },
+            ruleForm:{
+                rotationName:"",
+                rotationUrl:"",
+                rotationLinkUrl:"",
+            },
+            file:"",
+            newImg:"",
+            detail:""  //1修改 2添加
         }
     },
     created(){},
@@ -143,19 +182,95 @@ export default {
                     this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
                 }
         },
+        // 添加弹出
+        AddData(){
+           this.detail = 2
+           this.dialogVisible = true 
+        },
         //修改弹出
         Compile(index,row){
+            this.detail = 1
             console.log(row[index])
             this.dialogVisible = true
+            row[index].createTime =  ""
+            row[index].endTime =  ""
+            row[index].startTime =  ""
+            row[index].updateTime =  ""
             this.information = row[index]
-            // this.dialogImageUrl=row[index].rotationUrl
+        },
+        //图片回显
+        updateFace(event) {
+            this.file = event.target.files[0];
+			console.log(this.file);
+            let formData = new FormData();
+            // 向 formData 对象中添加文件
+            formData.append('file',this.file);
+            console.log(formData)
+           this.axios.post(this.$api_router.upImg,formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }).then(res => {
+                console.log(res);
+                this.newImg  =  res.data.msg
+            }).catch(err => {
+                console.log(err);
+			});
+        },
+        //取消修改
+        close(){
+            this.dialogVisible = false
+            this.newImg=""
         },
         //确认修改
         Affirm(){
-
+            this.information.rotationUrl =  this.newImg
+            this.information.rotationLinkUrl =  this.newImg
+            this.axios.post(this.$api_router.banner+'updateOne',this.information)
+            .then(res=>{
+                console.log(res)
+                if(res.data.code == 200){
+                this.$message({
+                    message: '修改成功',
+                    type: 'success'
+                });
+                    this.newImg=""
+                    this.dialogVisible = false
+                    this.Queryall()
+                }else{
+                    this.$message({
+                    message: res.data.msg,
+                    type: 'warning'
+                });
+                }
+                
+            })
         },
-         //删除
-       Remove(index,row){
+        //确认保存
+        Affirm1(){
+        this.ruleForm.rotationUrl = this.newImg
+        this.ruleForm.rotationLinkUrl = this.newImg
+        this.axios.post(this.$api_router.banner+'saveOne',this.ruleForm)
+        .then(res=>{
+            console.log(res)
+            if(res.data.code == 200){
+            this.$message({
+                message: '添加成功',
+                type: 'success'
+            });
+                this.Queryall()
+                this.newImg=""
+                this.dialogVisible = false
+            }else{
+                this.$message({
+                message: res.data.msg,
+                type: 'warning'
+            });
+            }
+        })
+        },
+        //删除
+        Remove(index,row){
            console.log(row[index].rotationId)
            this.$confirm("确定移除, 是否继续?", "提示", {
                 confirmButtonText: "确定",
@@ -175,18 +290,14 @@ export default {
                     }
                 })
             })
-       },
-       handleRemove(file, fileList) {
-        console.log(file, fileList);
-       },
-       handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-       }
+        },
     }
 }
 </script>
 <style scoped="scoped">
+    .flex{
+        display: flex;
+    }
     .Picture-box{
         width: 100%;
     }
@@ -227,7 +338,40 @@ export default {
         border: 1px solid #ccc;
     }
     .compileImg{
+       width: 100%;
+    }
+    .compileImg p{
+        /* margin: 10px; */
+        font-size: 18px;
+    }
+    .compileImg .imgold,
+    .compileImg .imgnew{
+        margin-left: 30px;
         width: 100px;
-        /* height: 100px; */
+        height: 100%;
+    }
+    .form-group{
+        margin-top: 30px;
+    }
+    .form-group .mart20{
+        margin-top: 20px;
+    }
+    .help-block{
+        font-size: 13px !important;
+        color: #f58f98;
+    }
+    .control-form{
+        margin-top: 20px;
+    }
+    .AddImg p{
+        margin-right: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+    }
+     .AddImg p::before{
+        content: '*';
+        color: #F56C6C;
     }
 </style>

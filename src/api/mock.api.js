@@ -6,8 +6,14 @@ export const APIROUTER = {
         'expertfindAll':api+'/NewExpertController/',  //专家顾问(查询全部)
         //轮播图
         'banner':api+'/NewPicController/',
+        //图片上传
+        'upImg':api+'/PicFileController/uploadPicture',
         // 项目
-        'project':api+'/NewItemsController/' 
+        'project':api+'/NewItemsController/',
+        //联系方式
+        'contact':api+'/NewMessageController/',
+        //行业新闻
+        'tradeNews':api+'/NewConsultController/',
 }
 
 Vue.prototype.$api_router = APIROUTER; // 直接声明出去

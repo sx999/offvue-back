@@ -7,36 +7,36 @@
         </div>
         <el-form :model="receiveData" :rules="rules" ref="receiveData" label-width="80px" class="demo-ruleForm">
             <el-form-item label="文章标题" prop="title">
-                <el-input v-model="receiveData.title" placeholder="文章标题"></el-input>
+                <el-input v-model="receiveData.consultTopic" placeholder="文章标题"></el-input>
             </el-form-item>
             <el-form-item label="发布时间" required>
                 <el-form-item prop="date">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="receiveData.date" style="width: 100%;"></el-date-picker>
+                    <el-date-picker type="date" placeholder="选择日期" v-model="receiveData.updateTime" style="width: 100%;"></el-date-picker>
                 </el-form-item>
             </el-form-item>
-            <el-form-item label="文章介绍" prop="detail">
-                <el-input v-model="receiveData.detail" placeholder="文章标题"></el-input>
-            </el-form-item>
-            <!-- <el-form-item label="所在栏目" prop="region">
+            <el-form-item label="所在栏目" prop="region">
                 <el-select v-model="ruleForm.region" placeholder="请选择">
-                <el-option label="公司使命" value="1"></el-option>
-                <el-option label="新闻资讯" value="2"></el-option>
+                <el-option v-if="ruleForm.region==1" label="公司使命" value="1"></el-option>
+                <el-option v-if="ruleForm.region==2" label="新闻资讯" value="2"></el-option>
                 </el-select>
-            </el-form-item> -->
+            </el-form-item>
             <div class="upimg">   
                 <div class="updiv"> 上传图片</div>
-                <el-upload
-                action="#"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :auto-upload="false">
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                </el-dialog>
-                <span class="span">一张即可(项目宣传图)</span>
+                <div class="oldImg">
+                    <p>原图:</p>
+                    <img :src="receiveData.consultPic" alt="" width="100">
+                </div>
+                <div class="newImg">
+                    <!-- 预览 -->
+                     <el-link type="success" :underline="false" :href="newImg"  target="_blank"  >
+						<img :src="newImg" alt="" width="100">
+					</el-link>
+                </div>
+                 <div class="control-form">
+                    <input type="file" class="upload" @change="updateFace($event)" ref="inputer0"  multiple accept="image/png,image/jpeg,image/jpg"/>
+                    <span class="span">宣传图((建议图片格式为：JPG/PNG/JPEG))</span>
+                </div>
+               
             </div>
         </el-form>
         <div class="overflowA">
@@ -47,7 +47,7 @@
             <div class="bottom">
                 <div class="updiv">文章编写</div>
                 <quill-editor 
-                    v-model="receiveData.text" 
+                    v-model="receiveData.consultSynopsis" 
                     ref="myQuillEditor" 
                     :options="editorOption" 
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
@@ -70,21 +70,29 @@ export default {
     data(){
         return{
              //接收的参数 集合
+             //新闻
             receiveData:{
-                title:"",
-                detail:"",
-                date:"",
-                text:"",
-                dialogImageUrl: '',
+                consultTopic:"",
+                consultSynopsis:"",
+                consultPic:"",
+                createTime:"",
+                dateTime:"",
+                endTime:"",
+                startTime:"",
+                updateTime:"",
             }, 
-            dialogImageUrl: '',
-            dialogVisible: false,
+            ruleForm:{
+                region:""
+            },
+            file:"",
+            newImg:"",
+            dialogVisible: true,
             Buttonshow:true,
             content:null, //富文本
             editorOption: {},
             rules: {
                 title: [
-                    { required: true, message: '请输入文章标题', trigger: 'blur' },
+                    { required: true, message: '请输入标题', trigger: 'blur' },
                     { min: 3, max: 20, message: '标题字数限制在20个字符', trigger: 'blur' }
                 ],
                 detail: [
@@ -105,21 +113,35 @@ export default {
                 this.Buttonshow = false
             }else{
                 this.receiveData =  this.$route.query.data
+                this.ruleForm.region = this.$route.query.type
                 console.log(this.receiveData)
                 // this.Buttonshow = true
             }
             
     },
     methods:{
+        //返回
         goBack(){
             this.$router.back(-1)
         },
-        handleRemove(file,fileList) {
-            console.log(file,fileList);
-        },
-        handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
+        //图片回显
+        updateFace(event) {
+            this.file = event.target.files[0];
+			console.log(this.file);
+            let formData = new FormData();
+            // 向 formData 对象中添加文件
+            formData.append('file',this.file);
+            console.log(formData)
+           this.axios.post(this.$api_router.upImg,formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }).then(res => {
+                console.log(res);
+                this.newImg  =  res.data.msg
+            }).catch(err => {
+                console.log(err);
+			});
         },
         Submit(){
               this.$confirm("您确定要提交吗?", "提示", {
@@ -127,11 +149,35 @@ export default {
 				cancelButtonText: "取消",
 				type: "warning",
 			  }).then(() => {
-                this.$message({
-                    message: '提交成功',
-                    type: 'success'
-                });
-				console.log(this.content)
+                this.receiveData.createTime =  ""
+                this.receiveData.endTime =  ""
+                this.receiveData.startTime =  ""
+                this.receiveData.updateTime =  ""
+                this.receiveData.dateTime = ""
+                this.receiveData.consultPic = this.newImg
+                this.axios.post(this.$api_router.tradeNews+'updateOne',this.receiveData)
+                .then(res=>{
+                    console.log(res)
+                      if(res.data.code == 200){
+                    this.$message({
+                        message: '修改成功',
+                        type: 'success'
+                    });
+                    this.receiveData.consultTopic="",
+                    this.receiveData.consultSynopsis="",
+                    this.receiveData.consultPic=""
+                    this.goBack()
+                    this.Queryall()
+                    
+                    
+                }else{
+                    this.$message({
+                        message: res.data.msg,
+                        type: 'warning'
+                    });
+                    return false
+                }
+                })
 			  });
             
 		},
@@ -242,4 +288,29 @@ export default {
         height: 100%;
         overflow: auto;
     } */
+    .Operator-box .oldImg,
+    .Operator-box .newImg{
+        display: flex;
+        align-items: center;
+    }
+    .Operator-box .oldImg p{
+        font-size: 14px;
+        color: #606266;
+
+    }
+    .Operator-box .oldImg img{
+        height: 100px;
+        margin-left: 10px;
+    }
+     .Operator-box .control-form{
+         display: flex;
+         flex-direction: column;
+     }
+    .Operator-box .control-form input{
+        margin-left: 20px;
+    }
+    .Operator-box .newImg{
+        height: 100px;
+        margin-left: 50px;
+    }
 </style>
