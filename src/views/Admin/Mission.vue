@@ -1,193 +1,306 @@
 <template>
     <div class="Mission-box">
-        <div class="title">
-            <p>基本信息</p>
-        </div>
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
-            <el-form-item label="文章标题" prop="name">
-                <el-input v-model="ruleForm.name" placeholder="文章标题"></el-input>
-                <!-- <span class="hint">标题字数限制在35个字符</span> -->
-            </el-form-item>
-            <el-form-item label="发布时间" required>
-                <el-form-item prop="date">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.date" style="width: 100%;"></el-date-picker>
-                </el-form-item>
-            </el-form-item>
-            <el-form-item label="所在栏目" prop="region">
-                <el-select v-model="ruleForm.region" placeholder="请选择">
-                <el-option label="公司使命" value="1"></el-option>
-                <el-option label="新闻资讯" value="2"></el-option>
-                </el-select>
-            </el-form-item>
-            <div class="upimg">   
-                <div class="updiv"> 上传图片</div>
-                <el-upload
-                action="#"
-                list-type="picture-card"
-                :on-preview="handlePictureCardPreview"
-                :on-remove="handleRemove"
-                :auto-upload="false">
-                    <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                </el-dialog>
+        <!-- 功能 -->
+        <div class="function">
+            <div class="flex">
+                <el-input v-model="search.headline" placeholder="标题"></el-input>
+                <el-button type="primary" icon="el-icon-search" plain>搜索</el-button>
+            </div> 
+            <el-button type="primary" icon="el-icon-edit" @click="Reset()">重置筛选条件</el-button>
+            <div class="function-1">
+                <div></div>
+                <el-button type="primary" icon="el-icon-plus" @click="AddData()">新增</el-button>
             </div>
-        </el-form>
-        <div class="title top30">
-            <p>备注资料</p>
         </div>
-        <div class="bottom">
-            <div class="updiv">文章编写</div>
-            <quill-editor 
-                v-model="content" 
-                ref="myQuillEditor" 
-                :options="editorOption" 
-                @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                @change="onEditorChange($event)">
-            </quill-editor>  
+        <!-- table -->
+        <div class="list">
+            <el-table
+            v-loading="loading"
+            :data="ftableData"
+            style="width: 100%">
+            <el-table-column
+                prop="id"
+                label="ID"
+                width="180">
+            </el-table-column>
+             <el-table-column
+                prop="createTime"
+                label="开始-日期"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="updateTime"
+                label="更新-日期"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="headline"
+                label="标题"
+                width="180">
+            </el-table-column>  
+            <el-table-column
+                prop="content"
+                label="内容简介"
+                width="180">
+            </el-table-column> 
+            <el-table-column
+                fixed="right"
+                label="操作"
+                width="180">
+                <template slot-scope="scope" class="templateol">
+                <el-button type="text" @click.native.prevent="Compile(scope.$index,tableData)">修改</el-button>
+                <el-button type="text" @click.native.prevent="Remove(scope.$index, tableData)">移除</el-button>
+                </template>
+            </el-table-column>
+            </el-table>
         </div>
-        <div class="button">
-            <el-button type="primary">确认修改</el-button>
-        </div>
+         <!-- 编辑框 -->
+        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%">
+           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+                 <el-form-item label="标题" prop="headline">
+                    <el-input v-model="ruleForm.headline" placeholder="请输入标题"></el-input>
+                </el-form-item>
+                <el-form-item label="内容" prop="content">
+                    <el-input type="textarea" v-model="ruleForm.content" placeholder="内容"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="close()">取 消</el-button>
+                <el-button type="primary" @click="Affirm()" v-if="detail==1">确 定</el-button>
+                <el-button type="primary" @click="Affirm1()" v-if="detail==2">保 存</el-button>
+            </span>
+		</el-dialog>
     </div>
-        
 </template>
 <script>
 export default {
     data(){
         return{
-            dialogImageUrl: '',
-            dialogVisible: false,
-            content:null, //富文本
-            editorOption: {},
-            ruleForm: {
-                name: '',
-                region: '1',
-                date: '',
+            loading:false, //加载动画
+            dialogVisible:false,  //详情框
+            information:{},  //详情页存放数据
+            tableData: [],
+            search:{
+               headline:'',
             },
+            ruleForm:{
+                id:"",
+                createTime:"",
+                updateTime:"",
+                content:"",
+                headline:"",
+                deleted:"0",
+            },
+            detail:"",  //1修改 2添加
             rules: {
-                name: [
-                    { required: true, message: '请输入文章标题', trigger: 'blur' },
-                    { min: 3, max: 35, message: '标题字数限制在35个字符', trigger: 'blur' }
+                headline:[
+                    {required: true, message: '标题不能为空', trigger: 'blur'}
                 ],
-                date: [
-                    { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-                ],
+                content:[
+                    {required: true, message: '内容不能为空', trigger: 'blur'}
+                ]
             }
         }
     },
+    created(){},
+    mounted(){
+        //进页面查询全部
+          this.Queryall()
+    },
+    computed:{
+			//过滤
+			"ftableData":function(){	
+			return this.tableData.filter(row=>{
+				// 默认过滤出来所有内容
+				var flag=true
+				// 对搜索的内容进行循环
+				for(var k in this.search){
+					// 判断搜索的条件不为空，并且搜索的条件不满足的情况下
+					if(!!this.search[k]&&!String(row[k]).includes(this.search[k])){
+						flag=false
+					}
+				}
+				return flag
+			})
+			},
+	},
     methods:{
-        handleRemove(file,fileList) {
-            console.log(file,fileList);
+        // 查询全部
+        Queryall(){
+            this.axios.post(this.$api_router.mission+'findAll')
+            .then(res=>{
+                console.log(res)
+                if(res.data.code == 200){
+                        this.tableData =  res.data.data
+                        this.$message({
+                        message: '查询成功',
+                        type: 'success'
+                        });
+                        this.Dateformatting()
+                        this.loading = false
+                }else{
+                    this.$message({
+                        message: '查询失败,'+res.data.msg,
+                        type: 'warning'
+                    });
+                    return false
+                }
+            })       
         },
-        handlePictureCardPreview(file) {
-            this.dialogImageUrl = file.url;
-            this.dialogVisible = true;
+        // 时间格式化
+        Dateformatting(){
+            for(var i=0;i<this.tableData.length;i++){
+                this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
+            }
         },
-        Submit(){
-              this.$confirm("您确定要提交吗?", "提示", {
-				confirmButtonText: "确定",
-				cancelButtonText: "取消",
-				type: "warning",
-			  }).then(() => {
+        //添加弹出
+        AddData(){
+            this.detail = 2
+            this.dialogVisible = true   
+        },
+        //修改弹出
+        Compile(index,row){
+                this.detail = 1
+                console.log(row[index])
+                this.dialogVisible = true
+                row[index].createTime =  ""
+                row[index].endTime =  ""
+                row[index].startTime =  ""
+                row[index].updateTime =  ""
+                row[index].dateTime = ""
+                this.ruleForm = row[index]
+        },
+        //取消修改
+        close(){
+            this.dialogVisible = false
+            // this.newimg = ""
+        },
+        //确认修改
+        Affirm(){
+                // this.ruleForm.memberPic = this.newimg
+                this.axios.post(this.$api_router.mission+'updateOne',this.ruleForm)
+                .then(res=>{
+                    console.log(res)
+                    if(res.data.code == 200){
+                        this.$message({
+                            message: '修改成功',
+                            type: 'success'
+                        });
+                        this.Queryall()
+                        this.ruleForm.headline="",
+                        this.ruleForm.content=""
+                    }else{
+                        this.$message({
+                            message: res.data.msg,
+                            type: 'warning'
+                        });
+                        return false
+                    }
+                })
+                this.dialogVisible = false
+        },
+        //确认保存
+        Affirm1(){
+            // this.ruleForm.memberPic = this.newimg
+            this.axios.post(this.$api_router.mission+'saveOne',this.ruleForm)
+            .then(res=>{
+                console.log(res)
+                if(res.data.code == 200){
                 this.$message({
-                    message: '提交成功',
+                    message: '添加成功',
                     type: 'success'
                 });
-				console.log(this.content)
-			  });
-            
-		},
-        onEditorBlur(){//失去焦点事件
+                    this.Queryall()
+                    this.dialogVisible = false
+                }else{
+                    this.$message({
+                    message: res.data.msg,
+                    type: 'warning'
+                });
+                }
+            })  
         },
-        onEditorFocus(){//获得焦点事件
+        //删除
+        Remove(index,row){
+            console.log(row[index].id)
+            this.$confirm("确定移除, 是否继续?", "提示", {
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    type: "warning",
+                }).then(()=>{
+                    this.axios.post(this.$api_router.mission+'delOne?id='+row[index].id)
+                    .then(res=>{
+                        console.log(res)
+                        if(res.data.code == 200){
+                            row.splice(index, 1);
+                        }else{
+                            this.$message({
+                                showClose: true,
+                                message: res.data.msg
+                            });
+                        }
+                    })
+                })
         },
-        onEditorChange(){//内容改变事件
-        }
+         //重置筛选条件
+        Reset(){
+            this.search.headline = ""
+            // this.search.region = ""
+
+        },
     }
 }
 </script>
 <style>
+    .flex{
+        display: flex;
+    }
     .Mission-box{
-        font-size: 13px !important;
-        /* background-color: #FFFFFF; */
+        width: 100%;
     }
-    .Mission-box .el-form-item{
-        margin-bottom: 12px;
+    .Mission-box .function{
+        width: 100%;
+        display: flex;
     }
-    .Mission-box .is-error{
-       margin-bottom: 0px;
+    .Mission-box .function .el-input{
+        width: 220px;
     }
-    .Mission-box .el-input{
-        width: 50% !important;
+    .Mission-box .function .el-button{
+        margin-left: 30px;
     }
-    .Mission-box .el-form-item__error{
-        top: 28% !important;
-        left: 54% !important;
+    .Mission-box .function-1{
+        padding-right: 20px;
+        width: 60%;
+        display: flex;
+        justify-content: space-between;
     }
-    .Mission-box .el-select{
-        width: 220px !important;
+    .Mission-box .list .cell{
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
     }
-     .Mission-box .el-select .el-input{
-        width: 100% !important;
-    }
-    .Mission-box .el-upload--picture-card{
-        width: 100px;
-        height: 100px;
-        line-height: 100px;
-    }
-   .Mission-box  .el-upload-list--picture-card .el-upload-list__item{
-        width: 100px;
-        height: 100px;
-    }
-    .hint{
-        margin-left: 50px;
-        color: #A5A5A5;
-    }
-    .updiv{
-        width: 80px;
-        text-align: right;
-        vertical-align: middle;
-        float: left;
-        font-size: 14px;
-        color: #606266;
-        line-height: 40px;
-        padding: 0 12px 0 0;
-        box-sizing: border-box;
-    }  
-    .updiv::before{
-        content: '*';
-        color: #F56C6C;
-        /* margin-right: 4px; */
+    .Mission-box .list .el-button{
+        width: 60px;
+        font-size: 13px;
+        border: 1px solid #ccc;
     }
     .Mission-box .title{
-        margin-bottom: 20px;
-        border-bottom: 1px solid #cccccc;
+        margin-left: 50px;
+        padding: 0 10px;
+        width: 50px;
+        display: flex;
+        align-items: center;
+        color: #606266;
     }
-    .Mission-box .title p{
-        width: 70px;
-        height: 26px;
-        text-align: center;
-        line-height: 26px;
-        font-size: 16px;
-        color: #111111;
-        border-bottom: 2px solid #0E8BC5;
+    .Mission-box .el-dialog .el-input__inner{
+        width: 60%;
     }
-    .Mission-box .top30{
-        margin-top: 30px;
+    .Mission-box .red{
+        font-size: 14px;
+        color:#f58f98;
+        margin-left: 20px;
     }
-    .Mission-box .bottom{
-       display: flex;
-    }
-    .Mission-box .bottom .quill-editor{
-        margin-left: 80px;
-        width: 80%;
-        height: 100%;
-        clear:both
-    }
-    .Mission-box .button{
-        margin-top:20px;
-        margin-left: 160px;
-    }
-</style>
+</style> 

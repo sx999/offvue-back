@@ -3,7 +3,10 @@ const api = process.env.VUE_APP_URL ? process.env.VUE_APP_URL : '/api';
 
 export const APIROUTER = {
         'login':  api + '/NewAdminController/getAdmin', // 登录
-        'expertfindAll':api+'/NewExpertController/',  //专家顾问(查询全部)
+        //专家顾问
+        'expert':api+'/NewExpertController/', 
+        //公司使命
+        'mission':api+'/MissionController/', 
         //轮播图
         'banner':api+'/NewPicController/',
         //图片上传

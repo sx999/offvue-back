@@ -5,15 +5,18 @@
                 <el-input v-model="search.competitionName" placeholder="活动/赛事名称"></el-input>
                 <el-button type="primary" icon="el-icon-search" plain>搜索</el-button>
             </div> 
-             <div class="flex">
+            <div class="flex">
                 <p class="title">类别:</p>
-                <el-select  el-select v-model="region" placeholder="活动/赛事">
-                    <el-option label="赛事" value="1"></el-option>
-                    <el-option label="活动" value="2"></el-option>
+                <el-select  el-select v-model="region" placeholder="活动/赛事" @change="Screen()">
+                    <el-option label="赛事" value="0"></el-option>
+                    <el-option label="活动" value="1"></el-option>
                 </el-select>
             </div>
+            <div>
+               
+            </div>
             <div class="function-1">
-                <div></div>
+                <div> <el-button type="primary" icon="el-icon-edit" @click="Reset()">重置筛选条件</el-button></div>
                 <el-button type="primary" icon="el-icon-plus" @click="AddData()">新增</el-button>
             </div>
         </div>
@@ -35,11 +38,11 @@
             </el-table-column>
              <el-table-column
                 prop="competitionName"
-                label="活动名称"
+                label="活动/赛事名称"
                 width="180">
             </el-table-column>  
             <el-table-column
-                label="活动图片"
+                label="活动/赛事图片"
                 width="200">
                 <template slot-scope="scope">
                     <el-link type="success" :underline="false" :href="scope.row.competitionPic"  target="_blank"  >
@@ -49,8 +52,16 @@
             </el-table-column>
             <el-table-column
                 prop="competitionSynopsis"
-                label="活动简介"
+                label="内容简介"
                 width="180">
+            </el-table-column>
+            <el-table-column
+                label="类别"
+                width="100">
+                <template slot-scope="scope">
+                    <el-tag v-if="scope.row.sort==0">赛事</el-tag>
+                    <el-tag v-if="scope.row.sort==1" type="success">活动</el-tag>
+                </template>
             </el-table-column>
            <el-table-column
                 fixed="right"
@@ -64,27 +75,28 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="42%">
+        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
-                <el-form-item label="姓名" prop="memberName">
-                    <el-input v-model="ruleForm.memberName" placeholder="请输入姓名"></el-input>
-                </el-form-item>
-                <el-form-item label="手机号" prop="memberPhone">
-                    <el-input v-model="ruleForm.memberPhone" placeholder="请输入手机号"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" prop="memberMailbox">
-                    <el-input v-model="ruleForm.memberMailbox" placeholder="请输入邮箱"></el-input>
+                <el-form-item label="活动名称" prop="competitionName">
+                    <el-input v-model="ruleForm.competitionName" placeholder="请输入活动/赛事名称"></el-input>
                 </el-form-item>
                 <el-form-item label="上传图片">
                     <input type="file" @change="updateFace($event)" ref="inputer0"  multiple accept="image/png,image/jpeg,image/jpg"/>
                 </el-form-item>
-                 <el-form-item label="预览图片:">
-                     <el-link type="success" :underline="false" :href="newimg"  target="_blank"  >
-						<img :src="newimg" alt="" width="100">
+                <el-form-item label="预览图片:">
+                     <el-link type="success" :underline="false" :href="ruleForm.competitionPic"  target="_blank"  >
+						<img :src="ruleForm.competitionPic" alt="" width="100">
 					</el-link>
                 </el-form-item>
-                <el-form-item label="简介" prop="Eventsynopsis">
-                    <el-input type="textarea" v-model="ruleForm.Eventsynopsis" placeholder="成员简介"></el-input>
+                <el-form-item label="类别">
+                    <el-select  el-select v-model="ruleForm.sort" placeholder="1活动/0赛事">
+                        <el-option label="赛事" value="0"></el-option>
+                        <el-option label="活动" value="1"></el-option>
+                    </el-select>
+                    <span class="red">(1活动 / 0赛事)</span>
+                </el-form-item>
+                <el-form-item label="活动简介" prop="competitionSynopsis">
+                    <el-input type="textarea" v-model="ruleForm.competitionSynopsis" placeholder="活动简介"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -103,24 +115,25 @@ export default {
             dialogVisible:false,  //详情框
             information:{},  //详情页存放数据
             tableData: [],
-            region:"",
             search:{
-                competitionName:''
+               competitionName:'',
             },
+            region:"",
             ruleForm:{
                 competitionName:"",
                 competitionSynopsis:"",
-                competitionPic:""
+                competitionPic:"",
+                sort:""
             },
             file:"",
             newimg:"",
             detail:"",  //1修改 2添加
             rules: {
                 competitionName:[
-                    {required: true, message: '活动名称', trigger: 'blur'}
+                    {required: true, message: '活动/赛事名称', trigger: 'blur'}
                 ],
                 competitionSynopsis:[
-                    {required: true, message: '活动简介不能为空', trigger: 'blur'}
+                    {required: true, message: '简介不能为空', trigger: 'blur'}
                 ]
             }
         }
@@ -194,7 +207,7 @@ export default {
                 },
             }).then(res => {
                 console.log(res);
-                this.newimg =  res.data.msg
+                this.ruleForm.competitionPic =  res.data.msg
             }).catch(err => {
                 console.log(err);
             });
@@ -218,14 +231,14 @@ export default {
         },
         //取消修改
         close(){
-            this.Queryall()
+            // this.Queryall()
             this.dialogVisible = false
             this.file = ""
-            this.newimg = ""
+            // this.newimg = ""
         },
         //确认修改
         Affirm(){
-                this.ruleForm.memberPic = this.newimg
+                // this.ruleForm.memberPic = this.newimg
                 this.axios.post(this.$api_router.events+'updateOne',this.ruleForm)
                 .then(res=>{
                     console.log(res)
@@ -235,11 +248,9 @@ export default {
                             type: 'success'
                         });
                         this.Queryall()
-                        this.ruleForm.memberName="",
-                        this.ruleForm.memberPhone="",
-                        this.ruleForm.memberMailbox="",
-                        this.ruleForm.Eventsynopsis=""
-                        this.ruleForm.memberPic=""
+                        this.ruleForm.competitionName="",
+                        this.ruleForm.competitionSynopsis="",
+                        this.ruleForm.competitionPic="",
                         this.file = ''
                         this.newimg = ''
                     }else{
@@ -254,7 +265,7 @@ export default {
         },
         //确认保存
         Affirm1(){
-            this.ruleForm.memberPic = this.newimg
+            // this.ruleForm.memberPic = this.newimg
             this.axios.post(this.$api_router.events+'saveOne',this.ruleForm)
             .then(res=>{
                 console.log(res)
@@ -295,7 +306,20 @@ export default {
                     })
                 })
         },
-       
+         //重置筛选条件
+        Reset(){
+            this.search.competitionName = "",
+            this.region = ""
+            this.Queryall()
+        },
+        //筛选类别
+        Screen(){
+            this.axios.post(this.$api_router.events+'findSort?sort='+this.region)
+            .then(res=>{
+                console.log(res)
+                this.tableData = res.data.data
+            })
+        }
     }
 }
 </script>
@@ -320,7 +344,7 @@ export default {
         padding-right: 20px;
         width: 60%;
         display: flex;
-        justify-content:space-between;
+        justify-content: space-around;
     }
     .Events-box .list .cell{
         overflow: hidden;
@@ -339,5 +363,13 @@ export default {
         display: flex;
         align-items: center;
         color: #606266;
+    }
+    .Events-box .el-dialog .el-input__inner{
+        width: 60%;
+    }
+    .Events-box .red{
+        font-size: 14px;
+        color:#f58f98;
+        margin-left: 20px;
     }
 </style>
