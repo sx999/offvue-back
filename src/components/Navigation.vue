@@ -38,14 +38,18 @@
                 <i class="el-icon-s-promotion"></i>
                 <span slot="title">公司使命</span>
             </el-menu-item>
-            <el-submenu index="/events">
+            <!-- <el-submenu index="/events">
                 <template slot="title">
                 <i class="el-icon-s-claim"></i>
                 <span slot="title">活动/赛事</span>
                 </template>
                     <el-menu-item index="/events/competition">赛事</el-menu-item>
                     <el-menu-item index="/events/activity">活动</el-menu-item>
- 			</el-submenu>
+ 			</el-submenu> -->
+            <el-menu-item index="/events">
+                <i class="el-icon-user-solid"></i>
+                <span slot="title">活动/赛事</span>
+            </el-menu-item>
             <el-menu-item index="/members">
                 <i class="el-icon-user-solid"></i>
                 <span slot="title">成员介绍</span>

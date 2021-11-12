@@ -14,6 +14,10 @@ export const APIROUTER = {
         'contact':api+'/NewMessageController/',
         //行业新闻
         'tradeNews':api+'/NewConsultController/',
+        //成员介绍
+        'members':api+'/NewMemberController/',
+        //赛事活动
+        'events':api+'/NewCompetitionController/'
 }
 
 Vue.prototype.$api_router = APIROUTER; // 直接声明出去

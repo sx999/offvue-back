@@ -36,7 +36,6 @@
                     <input type="file" class="upload" @change="updateFace($event)" ref="inputer0"  multiple accept="image/png,image/jpeg,image/jpg"/>
                     <span class="span">宣传图((建议图片格式为：JPG/PNG/JPEG))</span>
                 </div>
-               
             </div>
         </el-form>
         <div class="overflowA">
@@ -81,6 +80,7 @@ export default {
                 startTime:"",
                 updateTime:"",
             }, 
+            //判断是哪个页面
             ruleForm:{
                 region:""
             },
@@ -91,15 +91,15 @@ export default {
             content:null, //富文本
             editorOption: {},
             rules: {
-                title: [
+                title:[
                     { required: true, message: '请输入标题', trigger: 'blur' },
                     { min: 3, max: 20, message: '标题字数限制在20个字符', trigger: 'blur' }
                 ],
-                detail: [
+                detail:[
                     { required: true, message: '请输入文章介绍', trigger: 'blur' },
                     { min: 3, max: 35, message: '标题字数限制在35个字符', trigger: 'blur' }
                 ],
-                date: [
+                date:[
                     { type: 'date', required: true, message: '请选择日期', trigger: 'blur' }
                 ],
             }
@@ -168,8 +168,6 @@ export default {
                     this.receiveData.consultPic=""
                     this.goBack()
                     this.Queryall()
-                    
-                    
                 }else{
                     this.$message({
                         message: res.data.msg,

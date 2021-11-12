@@ -3,12 +3,12 @@
 		<div class="container right-panel-active">
 				<!-- Sign Up -->
 				<div class="container__form container--signup">
-					<form  class="form" id="form1">
+					<div  class="form" id="form1">
 						<h2 class="form__title">Sign In</h2>
 						<input type="text" v-model="formLabelAlign.username" placeholder="User" class="input" />
 						<input type="password" v-model="formLabelAlign.password" placeholder="Password" class="input"/>
 						<button class="btn" @click="SignUp()" @keyup.enter="SignUp()" >Sign Up</button>
-					</form>
+					</div>
 				</div>
 
 				<!-- Sign In -->
@@ -67,14 +67,20 @@
 						.then(res=>{
 							console.log(res)
 							if(res.data.code==200){
-								// this.$message({
-								// 	showClose: true,
-								// 	offset: 60,
-								// 	message: '登录成功',
-								// 	type: 'success',
-								// 	duration: 600,
-								// });
-								// this.$router.push({path:"/"})
+								this.$message({
+									showClose: true,
+									offset: 60,
+									message: '登录成功',
+									type: 'success',
+									duration: 600,
+								});
+								//登录成功保存登录信息
+								localStorage.setItem("username",res.data.data.adminName);
+								//保存唯一id
+								localStorage.setItem("userid",res.data.data.adminId);
+								//保存一个登录数据token
+								window.sessionStorage.setItem('cat_token', res.data.data.token)
+								this.$router.push({path:"/"})
 							}
 							else{
 								this.$message({

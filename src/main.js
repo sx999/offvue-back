@@ -23,6 +23,18 @@ Vue.prototype.moment = Moment
 //axios
 import axios from 'axios'
 Vue.prototype.axios = axios;    //全局注册，
+// 添加请求拦截器，在请求头中加token
+axios.interceptors.request.use(
+  config => {
+    if (sessionStorage.getItem('cat_token')) {
+	  // config.headers.Authorization = sessionStorage.getItem('cat_token');
+      config.headers.common['token'] = sessionStorage.getItem('cat_token');
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  });
 
 new Vue({
   router,

@@ -18,8 +18,8 @@ import Operator from '../views/Admin/Operator'
 import Picture from '../views/Admin/Picture/index'
 
 //子页面
-import Competition from '../views/Admin/Events/Competition.vue'
-import Activity from '../views/Admin/Events/Activity.vue'
+// import Competition from '../views/Admin/Events/Competition.vue'
+// import Activity from '../views/Admin/Events/Activity.vue'
 //404页面
 import NoMatch from '../views/Admin/NoMatch'
 //登录
@@ -44,11 +44,11 @@ const routes = [
       {path:"expert",component:Expert},
       {path:"mission",component:Mission},
       {path:"events",component:Events,
-        children:[
-          {path:"competition",component:Competition},
-          {path:"activity",component:Activity},
-          {path:"",redirec:'competition'}
-        ]
+        // children:[
+        //   {path:"competition",component:Competition},
+        //   {path:"activity",component:Activity},
+        //   {path:"",redirec:'competition'}
+        // ]
       },
       {path:"picture",component:Picture},
       {path:"members",component:Members},
@@ -86,14 +86,15 @@ const router = new VueRouter({
   routes
 })
  //路由守卫 
-//  router.beforeEach((to, from, next) => {
-//   // 如果用户访问的登录页，直接放行 
-//  if(to.path === '/login') return next()
-//   // 从 localStorage 中获取到 保存的 token 值 
-//  const tokenStr = sessionStorage.getItem('cat_token')
-//  // 没有token，强制跳转到登录页 
-//  if(!tokenStr)  next({path: '/'})
-//  // 存在token 直接放行
-//  next()
+ router.beforeEach((to, from, next) => {
+  // 如果用户访问的登录页，直接放行 
+ if(to.path === '/login') return next()
+  // 从 localStorage 中获取到 保存的 token 值 
+ const tokenStr = sessionStorage.getItem('cat_token')
+ // 没有token，强制跳转到登录页 
+ if(!tokenStr)  next({path: '/login'})
+ // 存在token 直接放行
+ next()
+ })
 // })
 export default router

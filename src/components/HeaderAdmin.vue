@@ -3,7 +3,7 @@
     <div class="header-list">
         <img src="../assets/images/gg.png" style="width:50px" alt="无法显示图片">
         <div class="header-text">
-            <span class="header-text-1">欢迎您，管理员:<span style="color:#4f5555;">{{keyname}}</span></span>
+            <span class="header-text-1">欢迎您，管理员:<span style="color:#4f5555;">{{username}}</span></span>
             <span class="header-text-2" @click="Signout">退出</span>
         </div>
     </div>
@@ -13,14 +13,26 @@
 export default {
     data(){
         return{
-            keyname:"000"
+            username:""
         }
+    },
+    mounted(){
+        //获取本地存储
+        this.username = localStorage.getItem('username');
     },
     methods:{
         Signout(){
-            console.log("点击退出")
-        }
-    }
+           this.$confirm("退出登录, 是否继续?", "提示", {
+				confirmButtonText: "确定",
+				cancelButtonText: "取消",
+				type: "warning",
+			  }).then(() => {
+				sessionStorage.clear();
+                localStorage.clear()
+				this.$router.push({ path: "/login" });
+			  });
+			},
+    },
 }
 </script>
 <style scoped>
