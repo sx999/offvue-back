@@ -99,7 +99,7 @@ export default {
 			},
 	},
     methods:{
-        // 查询全部
+        //查询全部
        Queryall(){
             this.axios.post(this.$api_router.tradeNews+'findAll')
             .then(res=>{
@@ -122,7 +122,7 @@ export default {
             })
             
        },
-       // 时间格式化
+       //时间格式化
        Dateformatting(){
                 for(var i=0;i<this.tableData.length;i++){
                     this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")

@@ -64,7 +64,7 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%">
+        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%" :before-close="handleDialogClose">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                 <el-form-item label="专家名称" prop="expertName">
                     <el-input v-model="ruleForm.expertName" placeholder="请输入专家名称"></el-input>
@@ -209,22 +209,26 @@ export default {
                 this.detail = 1
                 console.log(row[index])
                 this.dialogVisible = true
-                row[index].createTime =  ""
-                row[index].endTime =  ""
-                row[index].startTime =  ""
-                row[index].updateTime =  ""
-                row[index].dateTime = ""
                 this.ruleForm = row[index]
         },
         //取消修改
         close(){
             this.dialogVisible = false
+            this.ruleForm.expertName="",
+            this.ruleForm.expertDetails="",
+            this.ruleForm.expertPic="",
+            this.ruleForm.expertTitle=""
             this.file = ""
+            this.Queryall()
             // this.newimg = ""
         },
         //确认修改
         Affirm(){
-                // this.ruleForm.memberPic = this.newimg
+                this.ruleForm.createTime =  ""
+                this.ruleForm.endTime =  ""
+                this.ruleForm.startTime =  ""
+                this.ruleForm.updateTime =  ""
+                this.ruleForm.dateTime = ""
                 this.axios.post(this.$api_router.expert+'updateOne',this.ruleForm)
                 .then(res=>{
                     console.log(res)
@@ -297,8 +301,11 @@ export default {
         Reset(){
             this.search.expertName = ""
             // this.search.region = ""
-
         },
+         //右上角
+        handleDialogClose(){
+           this.close()
+        }
     }
 }
 </script>

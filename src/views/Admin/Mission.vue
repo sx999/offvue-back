@@ -55,7 +55,7 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%">
+        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%" :before-close="handleDialogClose">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                  <el-form-item label="标题" prop="headline">
                     <el-input v-model="ruleForm.headline" placeholder="请输入标题"></el-input>
@@ -84,12 +84,8 @@ export default {
                headline:'',
             },
             ruleForm:{
-                id:"",
-                createTime:"",
-                updateTime:"",
                 content:"",
                 headline:"",
-                deleted:"0",
             },
             detail:"",  //1修改 2添加
             rules: {
@@ -166,21 +162,28 @@ export default {
                 this.detail = 1
                 console.log(row[index])
                 this.dialogVisible = true
-                row[index].createTime =  ""
-                row[index].endTime =  ""
-                row[index].startTime =  ""
-                row[index].updateTime =  ""
-                row[index].dateTime = ""
+                // row[index].createTime =  ""
+                // row[index].endTime =  ""
+                // row[index].startTime =  ""
+                // row[index].updateTime =  ""
+                // row[index].dateTime = ""
                 this.ruleForm = row[index]
         },
         //取消修改
         close(){
             this.dialogVisible = false
+            // this.ruleForm.content=""
+            // this.ruleForm.headline=""
             // this.newimg = ""
         },
         //确认修改
         Affirm(){
-                // this.ruleForm.memberPic = this.newimg
+                this.ruleForm.createTime =  ""
+                this.ruleForm.endTime =  ""
+                this.ruleForm.startTime =  ""
+                this.ruleForm.updateTime =  ""
+                this.ruleForm.dateTime = ""
+                //this.ruleForm.memberPic = this.newimg
                 this.axios.post(this.$api_router.mission+'updateOne',this.ruleForm)
                 .then(res=>{
                     console.log(res)
@@ -251,6 +254,10 @@ export default {
             // this.search.region = ""
 
         },
+        //右上角
+        handleDialogClose(){
+            this.close()
+        }
     }
 }
 </script>
