@@ -64,7 +64,11 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%" :before-close="handleDialogClose">
+        <el-dialog title="正在编辑. . ." 
+        :visible.sync="dialogVisible" 
+        width="50%" 
+        :before-close="handleDialogClose"
+        :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                 <el-form-item label="专家名称" prop="expertName">
                     <el-input v-model="ruleForm.expertName" placeholder="请输入专家名称"></el-input>
@@ -173,12 +177,12 @@ export default {
         },
         // 时间格式化
         Dateformatting(){
-                    for(var i=0;i<this.tableData.length;i++){
-                        this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
-                        this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
-                        this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
-                        this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
-                    }
+            for(var i=0;i<this.tableData.length;i++){
+                this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
+            }
         },
         //图片回显
         updateFace(event) {

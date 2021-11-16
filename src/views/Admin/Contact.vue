@@ -62,7 +62,11 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="42%">
+        <el-dialog title="正在编辑. . ." 
+        :visible.sync="dialogVisible" 
+        width="42%"
+        :before-close="handleDialogClose"
+        :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                 <el-form-item label="手机号" prop="phone">
                     <el-input v-model="ruleForm.phone" placeholder="请输入手机号"></el-input>
@@ -251,6 +255,10 @@ export default {
                 })
             })
         },
+          //右上角
+        handleDialogClose(){
+           this.close()
+        }
     }
         
 }

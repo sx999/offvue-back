@@ -60,7 +60,10 @@
             </el-table>
         </div>
         <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="42%">
+        <el-dialog title="正在编辑. . ." 
+        :visible.sync="dialogVisible" 
+        width="42%"
+        :close-on-click-modal="false">
             <div class="compileImg">
                 <!-- 修改 -->
                 <div class="oldimgD"  v-if="detail==1">

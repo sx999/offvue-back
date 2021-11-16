@@ -55,7 +55,11 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%" :before-close="handleDialogClose">
+        <el-dialog title="正在编辑. . ." 
+        :visible.sync="dialogVisible" 
+        width="50%" 
+        :before-close="handleDialogClose"
+        :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                  <el-form-item label="标题" prop="headline">
                     <el-input v-model="ruleForm.headline" placeholder="请输入标题"></el-input>

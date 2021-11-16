@@ -75,7 +75,11 @@
             </el-table>
         </div>
          <!-- 编辑框 -->
-        <el-dialog title="正在编辑. . ." :visible.sync="dialogVisible" width="50%">
+        <el-dialog title="正在编辑. . ." 
+        :visible.sync="dialogVisible" 
+        width="50%" 
+        :before-close="handleDialogClose"
+        :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                 <el-form-item label="活动名称" prop="competitionName">
                     <el-input v-model="ruleForm.competitionName" placeholder="请输入活动/赛事名称"></el-input>
@@ -319,6 +323,9 @@ export default {
                 console.log(res)
                 this.tableData = res.data.data
             })
+        },
+         handleDialogClose(){
+            this.close()
         }
     }
 }

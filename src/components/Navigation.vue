@@ -9,7 +9,7 @@
         active-text-color="#ffd04b"
         :router="true">
         <div>
- 			<img src="../assets/images/logo.jpg" alt="" id="in-img" width="200" style="margin-right: 30px;height: 100px;">
+ 			<img src="../assets/images/logo.png" alt="" id="in-img" width="200" style="margin-right: 30px;height: 100px;">
  		</div>
             <el-menu-item>
                 <i class="el-icon-menu" 
@@ -21,10 +21,6 @@
             <el-menu-item  index="/home">
                 <i class="el-icon-s-home"></i>
                 <span slot="title">首页</span>
-            </el-menu-item>
-            <el-menu-item index="/demond">
-                <i class="el-icon-s-promotion"></i>
-                <span slot="title">测试1</span>
             </el-menu-item>
             <el-menu-item index="/picture">
                 <i class="el-icon-picture"></i>

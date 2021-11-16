@@ -6,11 +6,11 @@
             <p>基本信息</p>
         </div>
         <el-form :model="receiveData" :rules="rules" ref="receiveData" label-width="80px" class="demo-ruleForm">
-            <el-form-item label="文章标题" prop="title">
+            <el-form-item label="文章标题" prop="consultTopic">
                 <el-input v-model="receiveData.consultTopic" placeholder="文章标题"></el-input>
             </el-form-item>
             <el-form-item label="发布时间" required>
-                <el-form-item prop="date">
+                <el-form-item prop="updateTime">
                     <el-date-picker type="date" placeholder="选择日期" v-model="receiveData.updateTime" style="width: 100%;"></el-date-picker>
                 </el-form-item>
             </el-form-item>
@@ -91,15 +91,10 @@ export default {
             content:null, //富文本
             editorOption: {},
             rules: {
-                title:[
+               consultTopic:[
                     { required: true, message: '请输入标题', trigger: 'blur' },
-                    { min: 3, max: 20, message: '标题字数限制在20个字符', trigger: 'blur' }
                 ],
-                detail:[
-                    { required: true, message: '请输入文章介绍', trigger: 'blur' },
-                    { min: 3, max: 35, message: '标题字数限制在35个字符', trigger: 'blur' }
-                ],
-                date:[
+                updateTime:[
                     { type: 'date', required: true, message: '请选择日期', trigger: 'blur' }
                 ],
             }
