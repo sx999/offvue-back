@@ -31,12 +31,22 @@
             <el-table-column
                 prop="expertName"
                 label="专家姓名"
-                width="180">
+                width="100">
             </el-table-column>  
             <el-table-column
                 prop="expertTitle"
-                label="标题"
-                width="180">
+                label="职位"
+                width="160">
+            </el-table-column>
+            <el-table-column
+                prop="expertPhone"
+                label="手机号"
+                width="150">
+            </el-table-column>  
+            <el-table-column
+                prop="expertMailbox"
+                label="邮箱"
+                width="150">
             </el-table-column>  
             <el-table-column
                 label="图片"
@@ -73,8 +83,14 @@
                 <el-form-item label="专家名称" prop="expertName">
                     <el-input v-model="ruleForm.expertName" placeholder="请输入专家名称"></el-input>
                 </el-form-item>
-                 <el-form-item label="标题" prop="expertTitle">
-                    <el-input v-model="ruleForm.expertTitle" placeholder="请输入标题"></el-input>
+                <el-form-item label="职位" prop="expertTitle">
+                    <el-input v-model="ruleForm.expertTitle" placeholder="请输入职位"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号" prop="expertPhone">
+                    <el-input v-model="ruleForm.expertPhone" placeholder="请输入手机号"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" prop="expertMailbox">
+                    <el-input v-model="ruleForm.expertMailbox" placeholder="请输入邮箱"></el-input>
                 </el-form-item>
                 <el-form-item label="上传图片">
                     <input type="file" @change="updateFace($event)" ref="inputer0"  multiple accept="image/png,image/jpeg,image/jpg"/>
@@ -111,7 +127,9 @@ export default {
                 expertName:"",
                 expertDetails:"",
                 expertPic:"",
-                expertTitle:""
+                expertTitle:"",
+                expertPhone:"",
+                expertMailbox:"",
             },
             file:"",
             newimg:"",
@@ -121,10 +139,17 @@ export default {
                     {required: true, message: '专家姓名为空', trigger: 'blur'}
                 ],
                 expertTitle:[
-                    {required: true, message: '标题不能为空', trigger: 'blur'}
+                    {required: true, message: '职位不能为空', trigger: 'blur'}
                 ],
                 expertDetails:[
                     {required: true, message: '内容不能为空', trigger: 'blur'}
+                ],
+                expertPhone:[
+                    {required: true, message: '手机号不能为空', trigger: 'blur'},
+                ],
+                 expertMailbox:[
+                    {required: true, message: '邮箱不能为空', trigger: 'blur'},
+                    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur'}
                 ]
             }
         }
@@ -221,7 +246,9 @@ export default {
             this.ruleForm.expertName="",
             this.ruleForm.expertDetails="",
             this.ruleForm.expertPic="",
-            this.ruleForm.expertTitle=""
+            this.ruleForm.expertTitle="",
+            this.ruleForm.expertPhone="",
+            this.ruleForm.expertMailbox="",
             this.file = ""
             this.Queryall()
             // this.newimg = ""
@@ -246,6 +273,8 @@ export default {
                         this.ruleForm.expertTitle="",
                         this.ruleForm.expertDetails="",
                         this.ruleForm.expertPic="",
+                        this.ruleForm.expertPhone="",
+                        this.ruleForm.expertMailbox="",
                         this.file = ''
                         this.newimg = ''
                     }else{

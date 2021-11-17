@@ -16,8 +16,8 @@
             </el-form-item>
             <el-form-item label="所在栏目" prop="region">
                 <el-select v-model="ruleForm.region" placeholder="请选择">
-                <el-option v-if="ruleForm.region==1" label="公司使命" value="1"></el-option>
-                <el-option v-if="ruleForm.region==2" label="新闻资讯" value="2"></el-option>
+                <!-- <el-option v-if="ruleForm.region==1" label="公司使命" value="1"></el-option> -->
+                <el-option label="新闻资讯" value="2"></el-option>
                 </el-select>
             </el-form-item>
             <div class="upimg">   
@@ -71,18 +71,19 @@ export default {
              //接收的参数 集合
              //新闻
             receiveData:{
+                consultBrowse:"",
                 consultTopic:"",
                 consultSynopsis:"",
                 consultPic:"",
-                createTime:"",
+                consultTop:"0",
                 dateTime:"",
-                endTime:"",
-                startTime:"",
+                deleted: 0,
+                id: "",
                 updateTime:"",
             }, 
             //判断是哪个页面
             ruleForm:{
-                region:""
+                region:"2"
             },
             file:"",
             newImg:"",
@@ -120,7 +121,7 @@ export default {
             this.$router.back(-1)
         },
         //图片回显
-        updateFace(event) {
+        updateFace(event){
             this.file = event.target.files[0];
 			console.log(this.file);
             let formData = new FormData();
@@ -150,12 +151,12 @@ export default {
                 this.receiveData.updateTime =  ""
                 this.receiveData.dateTime = ""
                 this.receiveData.consultPic = this.newImg
-                this.axios.post(this.$api_router.tradeNews+'updateOne',this.receiveData)
+                this.axios.post(this.$api_router.tradeNews+'saveOne',this.receiveData)
                 .then(res=>{
                     console.log(res)
                       if(res.data.code == 200){
                     this.$message({
-                        message: '修改成功',
+                        message: '成功',
                         type: 'success'
                     });
                     this.receiveData.consultTopic="",
