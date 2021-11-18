@@ -1,12 +1,8 @@
 <template>
-    <div class="Expert-box">
-        <!-- 功能 -->
+    <div class="Invite-box">
         <div class="function">
-            <div class="flex">
-                <el-input v-model="search.expertName" placeholder="专家姓名"></el-input>
-                <el-button type="primary" icon="el-icon-search" plain>搜索</el-button>
-            </div> 
-            <el-button type="primary" icon="el-icon-edit" @click="Reset()">重置筛选条件</el-button>
+            <el-input v-model="search.position" placeholder="职位查询"></el-input>
+            <el-button type="primary" icon="el-icon-search" plain>搜索</el-button>
             <div class="function-1">
                 <div></div>
                 <el-button type="primary" icon="el-icon-plus" @click="AddData()">新增</el-button>
@@ -17,7 +13,8 @@
             <el-table
             v-loading="loading"
             :data="ftableData"
-            style="width: 100%">
+            max-height="700"
+            style="width:100%">
             <el-table-column
                 prop="id"
                 label="ID"
@@ -29,45 +26,27 @@
                 width="180">
             </el-table-column>
             <el-table-column
-                prop="expertName"
-                label="专家姓名"
-                width="100">
-            </el-table-column>  
-            <el-table-column
-                prop="expertTitle"
-                label="职位"
-                width="160">
+                prop="position"
+                label="招聘职位"
+                width="150">
             </el-table-column>
             <el-table-column
-                prop="expertPhone"
-                label="手机号"
-                width="150">
-            </el-table-column>  
-            <el-table-column
-                prop="expertMailbox"
-                label="邮箱"
-                width="150">
-            </el-table-column>  
-            <el-table-column
-                label="图片"
-                width="200">
-                <template slot-scope="scope">
-                    <el-link type="success" :underline="false" :href="scope.row.expertPic"  target="_blank"  >
-						<img :src="scope.row.expertPic" alt="" width="100">
-					</el-link>
-                </template> 
+                prop="demand"
+                label="岗位要求"
+                width="300">
             </el-table-column>
-            <el-table-column
-                prop="expertDetails"
-                label="内容简介"
-                width="180">
-            </el-table-column> 
-            <el-table-column
+             <el-table-column
+                prop="conditions"
+                label="岗位职责"
+                width="300">
+            </el-table-column>
+           <el-table-column
                 fixed="right"
                 label="操作"
                 width="180">
                 <template slot-scope="scope" class="templateol">
                 <el-button type="text" @click.native.prevent="Compile(scope.$index,tableData)">修改</el-button>
+                <!-- <span>|</span> -->
                 <el-button type="text" @click.native.prevent="Remove(scope.$index, tableData)">移除</el-button>
                 </template>
             </el-table-column>
@@ -80,28 +59,26 @@
         :before-close="handleDialogClose"
         :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
-                <el-form-item label="专家名称" prop="expertName">
-                    <el-input v-model="ruleForm.expertName" placeholder="请输入专家名称"></el-input>
+                <el-form-item label="招聘职位" prop="position">
+                    <el-input v-model="ruleForm.position" placeholder="请输入职位名称"></el-input>
                 </el-form-item>
-                <el-form-item label="职位" prop="expertTitle">
-                    <el-input v-model="ruleForm.expertTitle" placeholder="请输入职位"></el-input>
+                <el-form-item label="岗位要求" prop="demand">
+                    <quill-editor 
+                        v-model="ruleForm.demand" 
+                        ref="myQuillEditor" 
+                        :options="editorOption" 
+                        @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                        @change="onEditorChange($event)">
+                    </quill-editor> 
                 </el-form-item>
-                <el-form-item label="手机号" prop="expertPhone">
-                    <el-input v-model="ruleForm.expertPhone" placeholder="请输入手机号"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" prop="expertMailbox">
-                    <el-input v-model="ruleForm.expertMailbox" placeholder="请输入邮箱"></el-input>
-                </el-form-item>
-                <el-form-item label="上传图片">
-                    <input type="file" @change="updateFace($event)" ref="inputer0"  multiple accept="image/png,image/jpeg,image/jpg"/>
-                </el-form-item>
-                <el-form-item label="预览图片:">
-                     <el-link type="success" :underline="false" :href="ruleForm.expertPic"  target="_blank"  >
-						<img :src="ruleForm.expertPic" alt="" width="100">
-					</el-link>
-                </el-form-item>
-                <el-form-item label="内容" prop="expertDetails">
-                    <el-input type="textarea" v-model="ruleForm.expertDetails" placeholder="内容"></el-input>
+                <el-form-item label="岗位职责" prop="conditions">
+                   <quill-editor 
+                        v-model="ruleForm.conditions" 
+                        ref="myQuillEditor" 
+                        :options="editorOption" 
+                        @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                        @change="onEditorChange($event)">
+                    </quill-editor> 
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -118,39 +95,33 @@ export default {
         return{
             loading:false, //加载动画
             dialogVisible:false,  //详情框
-            information:{},  //详情页存放数据
+            // information:{},  //详情页存放数据
             tableData: [],
-            search:{
-               expertName:'',
-            },
             ruleForm:{
-                expertName:"",
-                expertDetails:"",
-                expertPic:"",
-                expertTitle:"",
-                expertPhone:"",
-                expertMailbox:"",
+                updateTime:"",
+                id:"",
+                deleted:0,
+                position:"",
+                demand:"",
+                conditions:"",
             },
             file:"",
-            newimg:"",
             detail:"",  //1修改 2添加
+            search:{
+                position:''
+            },
+            pageData:{}, //页码
+            editorOption: {},
             rules: {
-                expertName:[
-                    {required: true, message: '专家姓名为空', trigger: 'blur'}
+                position:[
+                    {required: true, message: '招聘岗位为空', trigger: 'blur'}
                 ],
-                expertTitle:[
-                    {required: true, message: '职位不能为空', trigger: 'blur'}
+                demand:[
+                    {required: true, message: '要求不能为空', trigger: 'blur'}
                 ],
-                expertDetails:[
-                    {required: true, message: '内容不能为空', trigger: 'blur'}
+                conditions:[
+                    {required: true, message: '职责不能为空', trigger: 'blur'}
                 ],
-                expertPhone:[
-                    {required: true, message: '手机号不能为空', trigger: 'blur'},
-                ],
-                 expertMailbox:[
-                    {required: true, message: '邮箱不能为空', trigger: 'blur'},
-                    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur'}
-                ]
             }
         }
     },
@@ -177,9 +148,9 @@ export default {
 			},
 	},
     methods:{
-        // 查询全部
+        //查询全部
         Queryall(){
-                this.axios.post(this.$api_router.expert+'findAll')
+                this.axios.post(this.$api_router.invite+'findAll')
                 .then(res=>{
                     console.log(res)
                     if(res.data.code == 200){
@@ -198,16 +169,15 @@ export default {
                         return false
                     }
                 })
-                
         },
-        // 时间格式化
+        //时间格式化
         Dateformatting(){
-            for(var i=0;i<this.tableData.length;i++){
-                this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
-                this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
-                this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
-                this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
-            }
+                for(var i=0;i<this.tableData.length;i++){
+                    this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
+                    this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
+                    this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
+                    this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
+                }
         },
         //图片回显
         updateFace(event) {
@@ -228,39 +198,36 @@ export default {
                 console.log(err);
             });
         },
-        //添加弹出
+        //新增
         AddData(){
             this.detail = 2
             this.dialogVisible = true   
         },
-        //修改弹出
+       //修改弹出
         Compile(index,row){
             this.detail = 1
             console.log(row[index])
             this.dialogVisible = true
             this.ruleForm = row[index]
         },
-        //取消修改
+         //取消修改
         close(){
             this.dialogVisible = false
-            this.ruleForm.expertName="",
-            this.ruleForm.expertDetails="",
-            this.ruleForm.expertPic="",
-            this.ruleForm.expertTitle="",
-            this.ruleForm.expertPhone="",
-            this.ruleForm.expertMailbox="",
+            this.ruleForm.updateTime="",
+            this.ruleForm.position="",
+            this.ruleForm.demand="",
+            this.ruleForm.conditions="",
             this.file = ""
             this.Queryall()
-            // this.newimg = ""
         },
-        //确认修改
+         //确认修改
         Affirm(){
-                this.ruleForm.createTime =  ""
-                this.ruleForm.endTime =  ""
-                this.ruleForm.startTime =  ""
-                this.ruleForm.updateTime =  ""
-                this.ruleForm.dateTime = ""
-                this.axios.post(this.$api_router.expert+'updateOne',this.ruleForm)
+            this.ruleForm.createTime =  ""
+            this.ruleForm.endTime =  ""
+            this.ruleForm.startTime =  ""
+            this.ruleForm.updateTime =  ""
+            this.ruleForm.dateTime = ""
+             this.axios.post(this.$api_router.invite+'updateOne',this.ruleForm)
                 .then(res=>{
                     console.log(res)
                     if(res.data.code == 200){
@@ -269,14 +236,11 @@ export default {
                             type: 'success'
                         });
                         this.Queryall()
-                        this.ruleForm.expertName="",
-                        this.ruleForm.expertTitle="",
-                        this.ruleForm.expertDetails="",
-                        this.ruleForm.expertPic="",
-                        this.ruleForm.expertPhone="",
-                        this.ruleForm.expertMailbox="",
+                        this.ruleForm.updateTime="",
+                        this.ruleForm.position="",
+                        this.ruleForm.demand="",
+                        this.ruleForm.conditions="",
                         this.file = ''
-                        this.newimg = ''
                     }else{
                         this.$message({
                             message: res.data.msg,
@@ -287,10 +251,9 @@ export default {
                 })
                 this.dialogVisible = false
         },
-        //确认保存
+         //确认保存
         Affirm1(){
-            // this.ruleForm.memberPic = this.newimg
-            this.axios.post(this.$api_router.expert+'saveOne',this.ruleForm)
+            this.axios.post(this.$api_router.invite+'saveOne',this.ruleForm)
             .then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
@@ -300,6 +263,9 @@ export default {
                 });
                     this.Queryall()
                     this.dialogVisible = false
+                    this.ruleForm.position="",
+                    this.ruleForm.demand="",
+                    this.ruleForm.conditions=""
                 }else{
                     this.$message({
                     message: res.data.msg,
@@ -316,7 +282,7 @@ export default {
                     cancelButtonText: "取消",
                     type: "warning",
                 }).then(()=>{
-                    this.axios.post(this.$api_router.expert+'delOne?id='+row[index].id)
+                    this.axios.post(this.$api_router.invite+'delOne?id='+row[index].id)
                     .then(res=>{
                         console.log(res)
                         if(res.data.code == 200){
@@ -330,65 +296,51 @@ export default {
                     })
                 })
         },
-         //重置筛选条件
-        Reset(){
-            this.search.expertName = ""
-            // this.search.region = ""
-        },
-         //右上角
+          //右上角
         handleDialogClose(){
            this.close()
+        },
+        onEditorBlur(){//失去焦点事件
+        },
+        onEditorFocus(){//获得焦点事件
+        },
+        onEditorChange(){//内容改变事件
         }
     }
 }
 </script>
 <style>
-   .flex{
-        display: flex;
-    }
-    .Expert-box{
+    .Invite-box{
         width: 100%;
     }
-    .Expert-box .function{
+    .Invite-box .function{
         width: 100%;
         display: flex;
     }
-    .Expert-box .function .el-input{
-        width: 220px;
+    .Invite-box .function .el-input{
+        width: 260px;
     }
-    .Expert-box .function .el-button{
+    .Invite-box .function .el-button{
         margin-left: 30px;
     }
-    .Expert-box .function-1{
+    .Invite-box .function-1{
         padding-right: 20px;
         width: 60%;
         display: flex;
-        justify-content: space-between;
+        justify-content:space-between;
     }
-    .Expert-box .list .cell{
+    .Invite-box .list .cell{
         overflow: hidden;
         text-overflow:ellipsis;
         white-space: nowrap;
     }
-    .Expert-box .list .el-button{
+    .Invite-box .list .el-button{
         width: 60px;
         font-size: 13px;
         border: 1px solid #ccc;
     }
-    .Expert-box .title{
-        margin-left: 50px;
-        padding: 0 10px;
-        width: 50px;
-        display: flex;
-        align-items: center;
-        color: #606266;
-    }
-    .Expert-box .el-dialog .el-input__inner{
-        width: 60%;
-    }
-    .Expert-box .red{
-        font-size: 14px;
-        color:#f58f98;
-        margin-left: 20px;
+   .Invite-box .quill-editor .ql-container{
+        height: 280px;
+        overflow: auto;
     }
 </style>

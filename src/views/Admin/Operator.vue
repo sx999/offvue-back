@@ -52,6 +52,7 @@
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                 </quill-editor>  
+                <!-- <el-input type="textarea" v-model="receiveData.consultSynopsis"></el-input> -->
             </div>
             <!-- 底部按钮 -->
             <div class="button">
@@ -102,7 +103,7 @@ export default {
         }
     },
     created(){
-      
+        
     },
     mounted(){
             if(this.$route.query.data == ""){
@@ -113,7 +114,7 @@ export default {
                 console.log(this.receiveData)
                 // this.Buttonshow = true
             }
-            
+            console.log(this.Buttonshow)
     },
     methods:{
         //返回
@@ -151,27 +152,52 @@ export default {
                 this.receiveData.updateTime =  ""
                 this.receiveData.dateTime = ""
                 this.receiveData.consultPic = this.newImg
-                this.axios.post(this.$api_router.tradeNews+'saveOne',this.receiveData)
-                .then(res=>{
-                    console.log(res)
-                      if(res.data.code == 200){
-                    this.$message({
-                        message: '成功',
-                        type: 'success'
-                    });
-                    this.receiveData.consultTopic="",
-                    this.receiveData.consultSynopsis="",
-                    this.receiveData.consultPic=""
-                    this.goBack()
-                    this.Queryall()
+                if(this.Buttonshow){
+                    this.axios.post(this.$api_router.tradeNews+'updateOne',this.receiveData)
+                        .then(res=>{
+                            console.log(res)
+                            if(res.data.code == 200){
+                            this.$message({
+                                message: '成功',
+                                type: 'success'
+                            });
+                            this.receiveData.consultTopic="",
+                            this.receiveData.consultSynopsis="",
+                            // this.receiveData.consultPic=""
+                            this.goBack()
+                            this.Queryall()
+                        }else{
+                            this.$message({
+                                message: res.data.msg,
+                                type: 'warning'
+                            });
+                            return false
+                        }
+                        })
                 }else{
-                    this.$message({
-                        message: res.data.msg,
-                        type: 'warning'
-                    });
-                    return false
+                    this.axios.post(this.$api_router.tradeNews+'saveOne',this.receiveData)
+                        .then(res=>{
+                            console.log(res)
+                            if(res.data.code == 200){
+                            this.$message({
+                                message: '成功',
+                                type: 'success'
+                            });
+                            this.receiveData.consultTopic="",
+                            this.receiveData.consultSynopsis="",
+                            // this.receiveData.consultPic=""
+                            this.goBack()
+                            this.Queryall()
+                        }else{
+                            this.$message({
+                                message: res.data.msg,
+                                type: 'warning'
+                            });
+                            return false
+                        }
+                    })
                 }
-                })
+               
 			  });
             
 		},
@@ -263,13 +289,20 @@ export default {
         margin-top: 18px;
     }
     .Operator-box .bottom{
+       
        display: flex;
+      
     }
     .Operator-box .bottom .quill-editor{
         margin-left: 80px;
         width: 80%;
-        height: 100%;
-        clear:both
+        /* height: 100%; */
+        clear:both;
+       
+    }
+    .Operator-box .bottom .quill-editor .ql-container{
+        height: 280px;
+        overflow: auto;
     }
     .Operator-box .button{
         margin-top:12px;
@@ -290,7 +323,6 @@ export default {
     .Operator-box .oldImg p{
         font-size: 14px;
         color: #606266;
-
     }
     .Operator-box .oldImg img{
         height: 100px;
@@ -307,4 +339,10 @@ export default {
         height: 100px;
         margin-left: 50px;
     }
+    .el-textarea__inner{
+        min-height: 350px !important;
+    }
+    /* .Operator-box .bottom{
+       
+    } */
 </style>

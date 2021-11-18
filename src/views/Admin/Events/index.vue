@@ -100,7 +100,13 @@
                     <span class="red">(1活动 / 0赛事)</span>
                 </el-form-item>
                 <el-form-item label="活动简介" prop="competitionSynopsis">
-                    <el-input type="textarea" v-model="ruleForm.competitionSynopsis" placeholder="活动简介"></el-input>
+                    <quill-editor 
+                        v-model="ruleForm.competitionSynopsis" 
+                        ref="myQuillEditor" 
+                        :options="editorOption" 
+                        @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                        @change="onEditorChange($event)">
+                    </quill-editor>  
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -378,5 +384,9 @@ export default {
         font-size: 14px;
         color:#f58f98;
         margin-left: 20px;
+    }
+    .Events-box .el-dialog .quill-editor .ql-container{
+        height: 280px;
+        overflow: auto;
     }
 </style>

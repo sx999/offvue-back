@@ -14,6 +14,8 @@ import Contact from '../views/Admin/Contact'
 import TradeNews from '../views/Admin/TradeNews'
 import Project from '../views/Admin/Project'
 import Operator from '../views/Admin/Operator'
+import Invite from '../views/Admin/Invite'
+import Joinme from '../views/Admin/Joinme'
 // 图片处理
 import Picture from '../views/Admin/Picture/index'
 
@@ -55,6 +57,8 @@ const routes = [
       {path:"contact",component:Contact},
       {path:"tradenews",component:TradeNews},
       {path:"project",component:Project},
+      {path:"invite",component:Invite},
+      {path:"joinme",component:Joinme},
       //修改/添加页面集合
       {path:"operator",name:"Operator",component:Operator},
     ]

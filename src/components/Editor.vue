@@ -151,9 +151,10 @@ export default {
 </script> 
 
 <style>
- .ql-container{
+ /* .ql-container{
+       overflow: scroll; 
        min-height: 300px !important;
-  }
+  } */
 .editor {
   line-height: normal !important;
   height: 800px;

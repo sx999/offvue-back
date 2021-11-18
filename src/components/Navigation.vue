@@ -26,12 +26,12 @@
                 <i class="el-icon-picture"></i>
                 <span slot="title">图片处理</span>
             </el-menu-item>
-            <el-menu-item index="/expert">
+            <el-menu-item index="/expert" disabled>
                 <i class="el-icon-s-custom"></i>
-                <span slot="title">专家顾问</span>
+                <span slot="title" disabled>专家顾问</span>
             </el-menu-item>
-            <el-menu-item index="/mission">
-                <i class="el-icon-s-promotion"></i>
+            <el-menu-item index="/mission" disabled>
+                <i class="el-icon-s-promotion" ></i>
                 <span slot="title">公司使命</span>
             </el-menu-item>
             <!-- <el-submenu index="/events">
@@ -54,13 +54,21 @@
                 <i class="el-icon-phone"></i>
                 <span slot="title">联系方式</span>
             </el-menu-item>
-             <el-menu-item index="/tradenews">
+            <el-menu-item index="/tradenews">
                 <i class="el-icon-s-opportunity"></i>
                 <span slot="title">行业新闻</span>
             </el-menu-item>
-            <el-menu-item index="/project">
+            <el-submenu index="1">
+                <template slot="title">
+                <i class="el-icon-s-claim"></i>
+                <span slot="title">服务信息</span>
+                </template>
+                    <el-menu-item index="/invite">招聘信息</el-menu-item>
+                    <el-menu-item index="/joinme">加入我们</el-menu-item>
+ 			</el-submenu>
+            <el-menu-item index="/project" disabled>
                 <i class="el-icon-s-management"></i>
-                <span slot="title">项目专栏</span>
+                <span slot="title" >项目专栏</span>
             </el-menu-item>
         </el-menu>
     </el-aside>

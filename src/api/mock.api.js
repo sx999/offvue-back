@@ -20,7 +20,11 @@ export const APIROUTER = {
         //成员介绍
         'members':api+'/NewMemberController/',
         //赛事活动
-        'events':api+'/NewCompetitionController/'
+        'events':api+'/NewCompetitionController/',
+        //招聘信息
+        'invite':api+'/NewRecruitmentConroller/',
+        //加入我们
+        'joinme':api+'/NewJoinController/'
 }
 
 Vue.prototype.$api_router = APIROUTER; // 直接声明出去

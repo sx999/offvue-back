@@ -13,7 +13,8 @@
             <el-table
             v-loading="loading"
             :data="ftableData"
-            style="width: 100%">
+            max-height="700"
+            style="width:100%">
             <el-table-column
                 prop="id"
                 label="ID"
@@ -32,7 +33,7 @@
             <el-table-column
                 prop="consultSynopsis"
                 label="新闻内容简介"
-                width="180">
+                width="300">
             </el-table-column>
             <el-table-column
                 label="图片"
@@ -60,7 +61,15 @@
             </el-table-column>
             </el-table>
         </div>
-        
+        <div class="block">
+			 <el-pagination
+			   @current-change="getLista($event)"
+			   :current-page="this.pageData.currentPage"
+			   :page-size="this.pageData.pageSize"
+			   layout="prev, pager, next"
+			   :total="this.pageData.totalRecord">
+			 </el-pagination>
+		</div>
     </div>
 </template>
 <script>
@@ -74,6 +83,7 @@ export default {
             search:{
                 consultTopic:''
             },
+            pageData:{}, //页码
         }
     },
     created(){},
@@ -101,11 +111,12 @@ export default {
     methods:{
         //查询全部
        Queryall(){
-            this.axios.post(this.$api_router.tradeNews+'findAll')
+            this.axios.post(this.$api_router.tradeNews+'list?currentPage=1&limit=6')
             .then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
-						this.tableData =  res.data.data
+						this.tableData =  res.data.data.page.dataList
+                        this.pageData =  res.data.data.page
 						this.$message({
 						  message: '查询成功',
 						  type: 'success'
@@ -120,7 +131,6 @@ export default {
                     return false
                 }
             })
-            
        },
        //时间格式化
        Dateformatting(){
@@ -163,7 +173,30 @@ export default {
                 })
             })
        },
-       
+       //分页
+       getLista(event){
+            console.log(event)
+             this.axios.post(this.$api_router.tradeNews+'list?currentPage='+event+'&limit=6')
+            .then(res=>{
+                console.log(res)
+                if(res.data.code == 200){
+						this.tableData =  res.data.data.page.dataList
+                        this.pageData =  res.data.data.page
+						this.$message({
+						  message: '查询成功',
+						  type: 'success'
+						});
+                        this.Dateformatting()
+						this.loading = false
+                }else{
+                    this.$message({
+                        message: '查询失败,'+res.data.msg,
+                        type: 'warning'
+                    });
+                    return false
+                }
+            })
+	  }
     }
 }
 </script>
