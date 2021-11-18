@@ -35,6 +35,11 @@
                 width="200">
             </el-table-column>
             <el-table-column
+                prop="rotationName"
+                label="图片标题"
+                width="200">
+            </el-table-column>
+            <el-table-column
                 label="图片"
                 width="200">
                 <template slot-scope="scope">
@@ -78,7 +83,7 @@
                 <!-- 修改 -->
                 <div class="oldimgD"  v-if="detail==1">
                     <p>原图:</p>
-                    <img class="imgold" :src="information.rotationUrl" alt=""> 
+                    <img class="imgold" :src="ruleForm.rotationUrl" alt=""> 
                 </div>
                 <!-- 添加 -->
                 <div class="AddImg" v-if="detail==2">
@@ -95,6 +100,12 @@
                         </el-select>
                     </div>
                 </div>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+                    <el-form-item label="图片标题" prop="rotationName">
+                        <el-input v-model="ruleForm.rotationName" placeholder="请输入图片标题"></el-input>
+                    </el-form-item>
+                </el-form>
+                 
                 <!-- 上传图片 -->
                 <div class="form-group">
                     <label class="control-label">上传图片</label>
@@ -104,8 +115,8 @@
                     </div>
                     <!-- 预览 -->
                     <div class="mart20">
-                        <el-link type="success" :underline="false" :href="newImg"  target="_blank"  >
-						    <img :src="newImg" width="200">
+                        <el-link type="success" :underline="false" :href="ruleForm.rotationUrl"  target="_blank"  >
+						    <img :src="ruleForm.rotationUrl" width="200">
 				        </el-link>
                     </div>
                     
@@ -139,9 +150,14 @@ export default {
                 sort:""
             },
             file:"",
-            newImg:"",
+            // newImg:"",
             detail:"",  //1修改 2添加
             pageData:{}, //页码
+            rules: {
+                rotationName:[
+                    {required: true, message: '图片标题', trigger: 'blur'}
+                ],
+            },
         }
     },
     created(){},
@@ -197,11 +213,11 @@ export default {
             this.detail = 1
             console.log(row[index])
             this.dialogVisible = true
-            // row[index].createTime =  ""
-            // row[index].endTime =  ""
-            // row[index].startTime =  ""
-            // row[index].updateTime =  ""
-            this.information = row[index]
+            row[index].createTime =  ""
+            row[index].endTime =  ""
+            row[index].startTime =  ""
+            row[index].updateTime =  ""
+            this.ruleForm = row[index]
         },
         //图片回显
         updateFace(event) {
@@ -217,7 +233,7 @@ export default {
                 },
             }).then(res => {
                 console.log(res);
-                this.newImg  =  res.data.msg
+                this.ruleForm.rotationUrl =  res.data.msg
             }).catch(err => {
                 console.log(err);
 			});
@@ -225,13 +241,11 @@ export default {
         //取消修改
         close(){
             this.dialogVisible = false
-            this.newImg=""
+            // this.newImg=""
         },
         //确认修改
         Affirm(){
-            this.information.rotationUrl =  this.newImg
-            this.information.rotationLinkUrl =  this.newImg
-            this.axios.post(this.$api_router.banner+'updateOne',this.information)
+            this.axios.post(this.$api_router.banner+'updateOne',this.ruleForm)
             .then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
@@ -239,22 +253,25 @@ export default {
                     message: '修改成功',
                     type: 'success'
                 });
-                    this.newImg=""
-                    this.dialogVisible = false
                     this.Queryall()
+                    this.ruleForm.rotationName="",
+                    this.ruleForm.rotationUrl="",
+                    this.ruleForm.rotationLinkUrl="",
+                    this.ruleForm.sort="",
+                    this.file = ''
                 }else{
-                    this.$message({
-                    message: res.data.msg,
-                    type: 'warning'
-                });
+                        this.$message({
+                        message: res.data.msg,
+                        type: 'warning'
+                     });
+                     return false
                 }
                 
             })
+              this.dialogVisible = false
         },
         //确认保存
         Affirm1(){
-        this.ruleForm.rotationUrl = this.newImg
-        this.ruleForm.rotationLinkUrl = this.newImg
         this.axios.post(this.$api_router.banner+'saveOne',this.ruleForm)
         .then(res=>{
             console.log(res)
@@ -264,8 +281,10 @@ export default {
                 type: 'success'
             });
                 this.Queryall()
-                this.newImg=""
                 this.dialogVisible = false
+                this.ruleForm.rotationName="",
+                this.ruleForm.rotationUrl="",
+                this.ruleForm.rotationLinkUrl=""
             }else{
                 this.$message({
                 message: res.data.msg,
@@ -357,8 +376,8 @@ export default {
     }
     .compileImg .imgold,
     .compileImg .imgnew{
-        margin-left: 30px;
-        width: 100px;
+        /* margin-left: 30px; */
+        width: 200px;
         height: 100%;
     }
     .form-group{
@@ -384,5 +403,8 @@ export default {
      .AddImg p::before{
         content: '*';
         color: #F56C6C;
+    }
+    .Picture-box .oldimgD{
+        margin-bottom: 30px;
     }
 </style>
