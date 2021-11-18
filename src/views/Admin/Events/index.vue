@@ -25,6 +25,7 @@
             <el-table
             v-loading="loading"
             :data="ftableData"
+            max-height="700"
             style="width: 100%">
             <el-table-column
                 prop="id"
@@ -74,6 +75,15 @@
             </el-table-column>
             </el-table>
         </div>
+        <div class="block">
+			 <el-pagination
+			   @current-change="getLista($event)"
+			   :current-page="this.pageData.currentPage"
+			   :page-size="this.pageData.pageSize"
+			   layout="prev, pager, next"
+			   :total="this.pageData.totalRecord">
+			 </el-pagination>
+		</div>
          <!-- 编辑框 -->
         <el-dialog title="正在编辑. . ." 
         :visible.sync="dialogVisible" 
@@ -93,7 +103,7 @@
 					</el-link>
                 </el-form-item>
                 <el-form-item label="类别">
-                    <el-select  el-select v-model="ruleForm.sort" placeholder="1活动/0赛事">
+                    <el-select class="select" v-model="ruleForm.sort" placeholder="1活动/0赛事">
                         <el-option label="赛事" value="0"></el-option>
                         <el-option label="活动" value="1"></el-option>
                     </el-select>
@@ -128,7 +138,7 @@ export default {
             search:{
                competitionName:'',
             },
-            region:"",
+            region:"0",
             ruleForm:{
                 competitionName:"",
                 competitionSynopsis:"",
@@ -146,7 +156,8 @@ export default {
                 competitionSynopsis:[
                     {required: true, message: '简介不能为空', trigger: 'blur'}
                 ]
-            }
+            },
+            pageData:{}, //页码
         }
     },
     created(){},
@@ -174,11 +185,12 @@ export default {
     methods:{
         // 查询全部
         Queryall(){
-                this.axios.post(this.$api_router.events+'findAll')
+                this.axios.post(this.$api_router.events+'list?currentPage=1&limit=6&sort='+this.region)
                 .then(res=>{
                     console.log(res)
                     if(res.data.code == 200){
-                            this.tableData =  res.data.data
+                            this.tableData =  res.data.data.page.dataList
+                            this.pageData =  res.data.data.page
                             this.$message({
                             message: '查询成功',
                             type: 'success'
@@ -193,7 +205,6 @@ export default {
                         return false
                     }
                 })
-                
         },
         // 时间格式化
         Dateformatting(){
@@ -262,7 +273,8 @@ export default {
                         this.ruleForm.competitionName="",
                         this.ruleForm.competitionSynopsis="",
                         this.ruleForm.competitionPic="",
-                        this.file = ''
+                        this.ruleForm.sort="",
+                        this.file = '',
                         this.newimg = ''
                     }else{
                         this.$message({
@@ -287,6 +299,9 @@ export default {
                 });
                     this.Queryall()
                     this.dialogVisible = false
+                    this.ruleForm.competitionName="",
+                    this.ruleForm.competitionSynopsis="",
+                    this.ruleForm.competitionPic=""
                 }else{
                     this.$message({
                     message: res.data.msg,
@@ -331,9 +346,39 @@ export default {
                 this.tableData = res.data.data
             })
         },
-         handleDialogClose(){
+        handleDialogClose(){
             this.close()
-        }
+        },
+        onEditorBlur(){//失去焦点事件
+        },
+        onEditorFocus(){//获得焦点事件
+        },
+        onEditorChange(){//内容改变事件
+        },
+         //分页
+       getLista(event){
+            console.log(event)
+             this.axios.post(this.$api_router.events+'list?currentPage='+event+'&limit=6&sort='+this.region)
+            .then(res=>{
+                console.log(res)
+                if(res.data.code == 200){
+						this.tableData =  res.data.data.page.dataList
+                        this.pageData =  res.data.data.page
+						this.$message({
+						  message: '查询成功',
+						  type: 'success'
+						});
+                        this.Dateformatting()
+						this.loading = false
+                }else{
+                    this.$message({
+                        message: '查询失败,'+res.data.msg,
+                        type: 'warning'
+                    });
+                    return false
+                }
+            })
+	  }
     }
 }
 </script>
@@ -386,8 +431,17 @@ export default {
         color:#f58f98;
         margin-left: 20px;
     }
+   .Events-box .el-dialog .select .el-input__inner{
+        width: 100% !important;
+    } 
     .Events-box .el-dialog .quill-editor .ql-container{
         height: 280px;
         overflow: auto;
+    }
+    .Events-box .block{
+        position: fixed;
+        bottom: 30px;
+        left: 300px;
+
     }
 </style>

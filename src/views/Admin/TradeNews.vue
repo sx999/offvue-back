@@ -230,5 +230,11 @@ export default {
         font-size: 13px;
         border: 1px solid #ccc;
     }
+     .TradeNews-box .block{
+        position: fixed;
+        bottom: 30px;
+        left: 300px;
+
+    }
     
 </style>
