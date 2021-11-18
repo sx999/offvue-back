@@ -3,14 +3,15 @@
         <!-- 头部功能 -->
          <div class="function">
             <!-- <el-input v-model="search.title" placeholder="图片名字"></el-input> -->
-            <div class="label"> 轮播图类别:</div>
-            <el-select v-model="search.region" placeholder="请选择图片归属">
-                    <el-option label="首页" value="1"></el-option>
-                    <el-option label="新闻动态" value="2"></el-option>
-                    <el-option label="赛事活动" value="3"></el-option>
-                    <el-option label="专家顾问" value="4"></el-option>
-                    <el-option label="文创商城" value="5"></el-option>
-                    <el-option label="关于我们" value="6"></el-option>
+            <div class="label"> 图片类别:</div>
+            <el-select v-model="search.region" placeholder="请选择图片归属" @change="Screen()">
+                    <el-option label="首页轮播图" value="1"></el-option>
+                    <el-option label="公司概况" value="2"></el-option>
+                    <el-option label="行业新闻" value="3"></el-option>
+                    <el-option label="热门赛事" value="4"></el-option>
+                    <el-option label="研学活动" value="5"></el-option>
+                    <el-option label="联系我们" value="6"></el-option>
+                    <el-option label="招贤纳士" value="7"></el-option>
             </el-select>
             <div class="function-1">
                 <div></div>
@@ -21,7 +22,7 @@
          <div class="list">
             <el-table
             v-loading="loading"
-            :data="ftableData"
+            :data="tableData"
             style="width: 100%">
             <el-table-column
                 prop="rotationId"
@@ -34,11 +35,6 @@
                 width="200">
             </el-table-column>
             <el-table-column
-                prop="rotationName"
-                label="图片分类名字"
-                width="120">
-            </el-table-column>
-            <el-table-column
                 label="图片"
                 width="200">
                 <template slot-scope="scope">
@@ -46,6 +42,19 @@
 						<img :src="scope.row.rotationUrl" alt="" width="100">
 					</el-link>
                 </template> 
+            </el-table-column>
+            <el-table-column
+                label="图片归属"
+                width="120">
+                <template slot-scope="scope">
+                    <el-tag v-if="scope.row.sort==1">首页轮播图</el-tag>
+                    <el-tag v-if="scope.row.sort==2">公司概况</el-tag>
+                    <el-tag v-if="scope.row.sort==3">行业新闻</el-tag>
+                    <el-tag v-if="scope.row.sort==4">热门赛事</el-tag>
+                    <el-tag v-if="scope.row.sort==5">研学活动</el-tag>
+                    <el-tag v-if="scope.row.sort==6">联系我们</el-tag>
+                    <el-tag v-if="scope.row.sort==7">招贤纳士</el-tag>
+                </template>
             </el-table-column>
            <el-table-column
                 fixed="right"
@@ -62,7 +71,8 @@
         <!-- 编辑框 -->
         <el-dialog title="正在编辑. . ." 
         :visible.sync="dialogVisible" 
-        width="42%"
+         width="42%"
+        :before-close="handleDialogClose"
         :close-on-click-modal="false">
             <div class="compileImg">
                 <!-- 修改 -->
@@ -74,13 +84,14 @@
                 <div class="AddImg" v-if="detail==2">
                     <div class="flex">
                         <p>图片类别</p>
-                        <el-select v-model="ruleForm.rotationName" placeholder="请选择图片分类">
-                            <el-option label="首页" value="1"></el-option>
-                            <el-option label="新闻动态" value="2"></el-option>
-                            <el-option label="赛事活动" value="3"></el-option>
-                            <el-option label="专家顾问" value="4"></el-option>
-                            <el-option label="文创商城" value="5"></el-option>
-                            <el-option label="关于我们" value="6"></el-option>
+                        <el-select v-model="ruleForm.sort" placeholder="请选择图片分类">
+                            <el-option label="首页轮播图" value="1"></el-option>
+                            <el-option label="公司概况" value="2"></el-option>
+                            <el-option label="行业新闻" value="3"></el-option>
+                            <el-option label="热门赛事" value="4"></el-option>
+                            <el-option label="研学活动" value="5"></el-option>
+                            <el-option label="联系我们" value="6"></el-option>
+                            <el-option label="招贤纳士" value="7"></el-option>
                         </el-select>
                     </div>
                 </div>
@@ -102,8 +113,8 @@
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="close()">取 消</el-button>
-                <el-button type="primary" @click="Affirm()" v-if="detail==1">确 定</el-button>
-                <el-button type="primary" @click="Affirm1()" v-if="detail==2">确 定</el-button>
+                <el-button type="primary" @click="Affirm()" v-if="detail==1">修改</el-button>
+                <el-button type="primary" @click="Affirm1()" v-if="detail==2">保存</el-button>
             </span>
 		</el-dialog>
     </div>
@@ -117,16 +128,20 @@ export default {
             information:{},
             tableData:[],
             search:{
-                region:''
+                region:'1'
             },
             ruleForm:{
+                rotationId:"",
+                deleted: 0,
                 rotationName:"",
                 rotationUrl:"",
                 rotationLinkUrl:"",
+                sort:""
             },
             file:"",
             newImg:"",
-            detail:""  //1修改 2添加
+            detail:"",  //1修改 2添加
+            pageData:{}, //页码
         }
     },
     created(){},
@@ -134,38 +149,24 @@ export default {
         this.Queryall()
     },
     computed:{
-        //过滤
-        "ftableData":function(){	
-        return this.tableData.filter(row=>{
-            // 默认过滤出来所有内容
-            var flag=true
-            // 对搜索的内容进行循环
-            for(var k in this.search){
-                // 判断搜索的条件不为空，并且搜索的条件不满足的情况下
-                if(!!this.search[k]&&!String(row[k]).includes(this.search[k])){
-                    flag=false
-                }
-            }
-            return flag
-        })
-        },
+       
     },
     methods: {
         //查询
         Queryall(){
             this.loading = true
-                this.axios.post(this.$api_router.banner+'findAll')
+                this.axios.post(this.$api_router.banner+'list?currentPage=1&limit=6&sort='+this.search.region)
                 .then(res=>{
                     console.log(res)
                     if(res.data.code == 200){ 
-                            this.loading = false
-                            this.tableData =  res.data.data
-                            this.Dateformatting()
+                            this.tableData =  res.data.data.page.dataList
+                            this.pageData =  res.data.data.page
                             this.$message({
                             message: '查询成功',
                             type: 'success'
                             });
-                            
+                            this.Dateformatting()
+                            this.loading = false
                     }else{
                         this.$message({
                             message: '查询失败,'+res.data.msg,
@@ -178,27 +179,28 @@ export default {
         },
         // 时间格式化
         Dateformatting(){
-                for(var i=0;i<this.tableData.length;i++){
-                    this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
-                    this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
-                    this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
-                    this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
-                }
+            for(var i=0;i<this.tableData.length;i++){
+                this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
+                this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
+            }
         },
         // 添加弹出
         AddData(){
            this.detail = 2
-           this.dialogVisible = true 
+           this.dialogVisible = true
+           this.ruleForm.sort = this.search.region
         },
         //修改弹出
         Compile(index,row){
             this.detail = 1
             console.log(row[index])
             this.dialogVisible = true
-            row[index].createTime =  ""
-            row[index].endTime =  ""
-            row[index].startTime =  ""
-            row[index].updateTime =  ""
+            // row[index].createTime =  ""
+            // row[index].endTime =  ""
+            // row[index].startTime =  ""
+            // row[index].updateTime =  ""
             this.information = row[index]
         },
         //图片回显
@@ -294,6 +296,12 @@ export default {
                 })
             })
         },
+        handleDialogClose(){
+            this.close()
+        },
+        Screen(){
+            this.Queryall()
+        }
     }
 }
 </script>
