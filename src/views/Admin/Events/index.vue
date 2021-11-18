@@ -135,6 +135,7 @@ export default {
                 competitionPic:"",
                 sort:""
             },
+            editorOption: {},
             file:"",
             newimg:"",
             detail:"",  //1修改 2添加
