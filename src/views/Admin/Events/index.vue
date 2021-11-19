@@ -40,11 +40,11 @@
              <el-table-column
                 prop="competitionName"
                 label="活动/赛事名称"
-                width="180">
+                width="300">
             </el-table-column>  
             <el-table-column
                 label="活动/赛事图片"
-                width="200">
+                width="220">
                 <template slot-scope="scope">
                     <el-link type="success" :underline="false" :href="scope.row.competitionPic"  target="_blank"  >
 						<img :src="scope.row.competitionPic" alt="" width="100">
@@ -54,11 +54,11 @@
             <el-table-column
                 prop="competitionSynopsis"
                 label="内容简介"
-                width="180">
+                width="300">
             </el-table-column>
             <el-table-column
                 label="类别"
-                width="100">
+                width="150">
                 <template slot-scope="scope">
                     <el-tag v-if="scope.row.sort==0">赛事</el-tag>
                     <el-tag v-if="scope.row.sort==1" type="success">活动</el-tag>
@@ -91,7 +91,7 @@
         :before-close="handleDialogClose"
         :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
-                <el-form-item label="活动名称" prop="competitionName">
+                <el-form-item label="项目名称" prop="competitionName">
                     <el-input v-model="ruleForm.competitionName" placeholder="请输入活动/赛事名称"></el-input>
                 </el-form-item>
                 <el-form-item label="上传图片">
@@ -109,7 +109,7 @@
                     </el-select>
                     <span class="red">(1活动 / 0赛事)</span>
                 </el-form-item>
-                <el-form-item label="活动简介" prop="competitionSynopsis">
+                <el-form-item label="项目简介" prop="competitionSynopsis">
                     <quill-editor 
                         v-model="ruleForm.competitionSynopsis" 
                         ref="myQuillEditor" 
@@ -237,7 +237,8 @@ export default {
         //添加弹出
         AddData(){
             this.detail = 2
-            this.dialogVisible = true 
+            this.dialogVisible = true
+            this.ruleForm.sort = this.region
         },
         //修改弹出
         Compile(index,row){

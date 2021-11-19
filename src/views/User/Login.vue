@@ -70,7 +70,7 @@
 								this.$message({
 									showClose: true,
 									offset: 60,
-									message: '登录成功',
+									message: '欢迎登录行由心后台管理',
 									type: 'success',
 									duration: 600,
 								});
