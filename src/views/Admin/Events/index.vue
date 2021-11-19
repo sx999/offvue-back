@@ -32,11 +32,21 @@
                 label="ID"
                 width="180">
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 prop="updateTime"
-                label="日期"
+                label="发布日期"
                 width="180">
             </el-table-column>
+            <el-table-column
+                prop="startTime"
+                label="开始时间"
+                width="180">
+            </el-table-column>
+            <el-table-column
+                prop="endTime"
+                label="结束时间"
+                width="180">
+            </el-table-column> -->
              <el-table-column
                 prop="competitionName"
                 label="活动/赛事名称"
@@ -92,7 +102,21 @@
         :close-on-click-modal="false">
            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" class="demo-ruleForm">
                 <el-form-item label="项目名称" prop="competitionName">
-                    <el-input v-model="ruleForm.competitionName" placeholder="请输入活动/赛事名称"></el-input>
+                    <el-input class="no1" v-model="ruleForm.competitionName" placeholder="请输入活动/赛事名称"></el-input>
+                </el-form-item>
+                 <el-form-item label="开始时间"  required prop="startTime">
+                    <el-date-picker
+                        v-model="ruleForm.startTime"
+                        type="date"
+                        placeholder="选择日期">
+                    </el-date-picker>
+                </el-form-item>
+                 <el-form-item label="结束时间"  required prop="endTime">
+                    <el-date-picker
+                        v-model="ruleForm.endTime"
+                        type="date"
+                        placeholder="选择日期">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="上传图片">
                     <input type="file" @change="updateFace($event)" ref="inputer0"  multiple accept="image/png,image/jpeg,image/jpg"/>
@@ -107,7 +131,7 @@
                         <el-option label="赛事" value="0"></el-option>
                         <el-option label="活动" value="1"></el-option>
                     </el-select>
-                    <span class="red">(1活动 / 0赛事)</span>
+                    <!-- <span class="red">(1活动 / 0赛事)</span> -->
                 </el-form-item>
                 <el-form-item label="项目简介" prop="competitionSynopsis">
                     <quill-editor 
@@ -121,8 +145,8 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="close()">取 消</el-button>
-                <el-button type="primary" @click="Affirm()" v-if="detail==1">确 定</el-button>
-                <el-button type="primary" @click="Affirm1()" v-if="detail==2">保 存</el-button>
+                <el-button type="primary" @click="Affirm('ruleForm')" v-if="detail==1">确 定</el-button>
+                <el-button type="primary" @click="Affirm1('ruleForm')" v-if="detail==2">保 存</el-button>
             </span>
 		</el-dialog>
     </div>
@@ -140,6 +164,9 @@ export default {
             },
             region:"0",
             ruleForm:{
+                classify:"",
+                startTime:"",
+                endTime:"",
                 competitionName:"",
                 competitionSynopsis:"",
                 competitionPic:"",
@@ -155,6 +182,12 @@ export default {
                 ],
                 competitionSynopsis:[
                     {required: true, message: '简介不能为空', trigger: 'blur'}
+                ],
+                startTime:[
+                    {required: true, message: '开始日期不能为空', trigger: 'blur'}
+                ],
+                endTime:[
+                    {required: true, message: '结束日期不能为空', trigger: 'blur'}
                 ]
             },
             pageData:{}, //页码
@@ -208,12 +241,12 @@ export default {
         },
         // 时间格式化
         Dateformatting(){
-            for(var i=0;i<this.tableData.length;i++){
-                this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
-                this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
-                this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
-                this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
-            }
+            // for(var i=0;i<this.tableData.length;i++){
+            //     this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
+            //     this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
+            //     this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
+            //     this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
+            // }
         },
         //图片回显
         updateFace(event) {
@@ -239,6 +272,11 @@ export default {
             this.detail = 2
             this.dialogVisible = true
             this.ruleForm.sort = this.region
+            this.ruleForm.competitionName = "",
+            this.ruleForm.competitionSynopsis = "",
+            this.ruleForm.competitionPic = "",
+            this.ruleForm.endTime= "",
+            this.ruleForm.startTime = ""
         },
         //修改弹出
         Compile(index,row){
@@ -246,9 +284,9 @@ export default {
                 console.log(row[index])
                 this.dialogVisible = true
                 row[index].createTime =  ""
-                row[index].endTime =  ""
-                row[index].startTime =  ""
-                row[index].updateTime =  ""
+                // row[index].endTime =  ""
+                // row[index].startTime =  ""
+                // row[index].updateTime =  ""
                 row[index].dateTime = ""
                 this.ruleForm = row[index]
         },
@@ -257,11 +295,17 @@ export default {
             // this.Queryall()
             this.dialogVisible = false
             this.file = ""
+            // this.ruleForm.competitionName = "",
+            // this.ruleForm.competitionSynopsis = "",,
+            // this.ruleForm.competitionPic = "",
+            // this.ruleForm.competitionName = ""
             // this.newimg = ""
         },
         //确认修改
         Affirm(){
                 // this.ruleForm.memberPic = this.newimg
+                // this.ruleForm.startTime = this.moment(this.tableData.startTime).format("YYYY-MM-DD HH:mm:ss")
+                // this.ruleForm.endTime = this.moment(this.tableData.endTime).format("YYYY-MM-DD HH:mm:ss")
                 this.axios.post(this.$api_router.events+'updateOne',this.ruleForm)
                 .then(res=>{
                     console.log(res)
@@ -275,6 +319,8 @@ export default {
                         this.ruleForm.competitionSynopsis="",
                         this.ruleForm.competitionPic="",
                         this.ruleForm.sort="",
+                        this.ruleForm.startTime="",
+                        this.ruleForm.endTime=""
                         this.file = '',
                         this.newimg = ''
                     }else{
@@ -288,28 +334,41 @@ export default {
                 this.dialogVisible = false
         },
         //确认保存
-        Affirm1(){
-            // this.ruleForm.memberPic = this.newimg
-            this.axios.post(this.$api_router.events+'saveOne',this.ruleForm)
-            .then(res=>{
-                console.log(res)
-                if(res.data.code == 200){
-                this.$message({
-                    message: '添加成功',
-                    type: 'success'
-                });
-                    this.Queryall()
-                    this.dialogVisible = false
-                    this.ruleForm.competitionName="",
-                    this.ruleForm.competitionSynopsis="",
-                    this.ruleForm.competitionPic=""
-                }else{
-                    this.$message({
-                    message: res.data.msg,
-                    type: 'warning'
-                });
+        Affirm1(ruleForm){
+             this.$refs[ruleForm].validate((valid) => {
+                if (valid) {
+                        this.axios.post(this.$api_router.events+'saveOne',this.ruleForm)
+                        .then(res=>{
+                            console.log(res)
+                            if(res.data.code == 200){
+                            this.$message({
+                                message: '添加成功',
+                                type: 'success'
+                            });
+                            this.Queryall()
+                            this.dialogVisible = false
+                            this.ruleForm.competitionName="",
+                            this.ruleForm.competitionSynopsis="",
+                            this.ruleForm.competitionPic=""
+                            this.ruleForm.startTime="",
+                            this.ruleForm.endTime=""
+                        }else{
+                            this.$message({
+                            message: res.data.msg,
+                            type: 'warning'
+                        });
                 }
             })  
+          }else{
+                this.$message({
+                    message: "您还没输入完整",
+                    type: 'warning'
+                });
+            return false;
+          }
+        });
+            // this.ruleForm.memberPic = this.newimg
+           
         },
         //删除
         Remove(index,row){
@@ -424,9 +483,10 @@ export default {
         align-items: center;
         color: #606266;
     }
-    .Events-box .el-dialog .el-input__inner{
+    .Events-box .el-dialog .no1{
         width: 60%;
     }
+    
     .Events-box .red{
         font-size: 14px;
         color:#f58f98;

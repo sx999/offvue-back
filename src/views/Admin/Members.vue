@@ -77,6 +77,7 @@
                 <el-form-item label="手机号" prop="memberPhone">
                     <el-input v-model="ruleForm.memberPhone" placeholder="请输入手机号"></el-input>
                 </el-form-item>
+
                 <el-form-item label="邮箱" prop="memberMailbox">
                     <el-input v-model="ruleForm.memberMailbox" placeholder="请输入邮箱"></el-input>
                 </el-form-item>
@@ -112,6 +113,8 @@ export default {
                 memberName:''
             },
             ruleForm:{
+                startTime:"",
+                endTime:"",
                 memberName:"",
                 memberPhone:"",
                 memberMailbox:"",
