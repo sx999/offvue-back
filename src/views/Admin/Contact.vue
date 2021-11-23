@@ -32,17 +32,17 @@
             <el-table-column
                 prop="mailbox"
                 label="邮箱"
-                width="180">
+                width="230">
             </el-table-column>
             <el-table-column
                 prop="weixin"
                 label="微信"
-                width="180">
+                width="150">
             </el-table-column>
             <el-table-column
                 prop="qq"
                 label="QQ"
-                width="180">
+                width="150">
             </el-table-column>
             <el-table-column
                 prop="weibo"

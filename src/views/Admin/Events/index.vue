@@ -25,7 +25,7 @@
             <el-table
             v-loading="loading"
             :data="ftableData"
-            max-height="700"
+            :max-height='tableHeight'
             style="width: 100%">
             <el-table-column
                 prop="id"
@@ -159,6 +159,7 @@ export default {
             dialogVisible:false,  //详情框
             information:{},  //详情页存放数据
             tableData: [],
+            tableHeight: 600,
             search:{
                competitionName:'',
             },
@@ -196,7 +197,8 @@ export default {
     created(){},
     mounted(){
         //进页面查询全部
-          this.Queryall()
+        this.Queryall()
+    
     },
     computed:{
 			//过滤
@@ -284,9 +286,9 @@ export default {
                 console.log(row[index])
                 this.dialogVisible = true
                 row[index].createTime =  ""
-                // row[index].endTime =  ""
-                // row[index].startTime =  ""
-                // row[index].updateTime =  ""
+                row[index].endTime =  ""
+                row[index].startTime =  ""
+                row[index].updateTime =  ""
                 row[index].dateTime = ""
                 this.ruleForm = row[index]
         },

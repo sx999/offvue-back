@@ -10,7 +10,6 @@
 						<button class="btn" @click="SignUp()" @keyup.enter="SignUp()" >Sign Up</button>
 					</div>
 				</div>
-
 				<!-- Sign In -->
 				<!-- <div class="container__form container--signin">
 					<form action="#" class="form" id="form2">
@@ -26,7 +25,7 @@
 				<div class="container__overlay">
 					<div class="overlay">
 						<div class="overlay__panel overlay--left">
-							<button class="btn" id="signIn">Hello-world</button>
+							<button class="btn" id="signIn">行由心后台管理</button>
 						</div>
 						<div class="overlay__panel overlay--right">
 							<button class="btn" id="signUp">Hello-world</button>
