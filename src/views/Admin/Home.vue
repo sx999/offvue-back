@@ -1,14 +1,7 @@
 <template>
-     <div class="infinite-list-wrapper" style="overflow:auto">
-        <ul
-        class="list"
-        v-infinite-scroll="load"
-        infinite-scroll-disabled="disabled">
-        <li v-for="(i,index) in count" :key="index" class="list-item">{{ i }}</li>
-        </ul>
-        <p v-if="loading">加载中...</p>
-        <p v-if="noMore">没有更多了</p>
-  </div>
+     <div>
+       <h1>首页</h1>
+     </div>
 </template>
 <script>
 export default {
@@ -41,8 +34,5 @@ export default {
 }
 </script>
 <style scoped='scoped'>
-	.infinite-list-wrapper{
-        height: 100px;
-    }
-
+	
 </style>

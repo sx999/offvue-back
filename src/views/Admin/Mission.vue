@@ -132,10 +132,7 @@ export default {
                 console.log(res)
                 if(res.data.code == 200){
                         this.tableData =  res.data.data
-                        this.$message({
-                        message: '查询成功',
-                        type: 'success'
-                        });
+                       
                         this.Dateformatting()
                         this.loading = false
                 }else{
@@ -243,6 +240,10 @@ export default {
                         console.log(res)
                         if(res.data.code == 200){
                             row.splice(index, 1);
+                            this.$message({
+                            message: '修改成功',
+                            type: 'success'
+                            });
                         }else{
                             this.$message({
                                 showClose: true,

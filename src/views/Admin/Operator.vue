@@ -9,9 +9,12 @@
             <el-form-item label="文章标题" prop="consultTopic">
                 <el-input v-model="receiveData.consultTopic" placeholder="文章标题"></el-input>
             </el-form-item>
+            <el-form-item label="文章描述" prop="synopsis">
+                <el-input v-model="receiveData.synopsis" placeholder="文章描述"></el-input>
+            </el-form-item>
             <el-form-item label="发布时间" required>
-                <el-form-item prop="updateTime">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="receiveData.updateTime" style="width: 100%;"></el-date-picker>
+                <el-form-item prop="startTime">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="receiveData.startTime" style="width: 100%;"></el-date-picker>
                 </el-form-item>
             </el-form-item>
             <el-form-item label="所在栏目" prop="region">
@@ -22,14 +25,14 @@
             </el-form-item>
             <div class="upimg">   
                 <div class="updiv"> 上传图片</div>
-                <div class="oldImg">
+                <!-- <div class="oldImg">
                     <p>原图:</p>
                     <img :src="receiveData.consultPic" alt="" width="100">
-                </div>
+                </div> -->
                 <div class="newImg">
                     <!-- 预览 -->
-                     <el-link type="success" :underline="false" :href="newImg"  target="_blank"  >
-						<img :src="newImg" alt="" width="100">
+                     <el-link type="success" :underline="false" :href="receiveData.consultPic"  target="_blank"  >
+						<img :src="receiveData.consultPic" alt="" width="100">
 					</el-link>
                 </div>
                  <div class="control-form">
@@ -77,9 +80,9 @@ export default {
                 consultSynopsis:"",
                 consultPic:"",
                 consultTop:"0",
-                dateTime:"",
                 deleted: 0,
                 id: "",
+                startTime:"",
                 updateTime:"",
             }, 
             //判断是哪个页面
@@ -87,18 +90,22 @@ export default {
                 region:"2"
             },
             file:"",
-            newImg:"",
+            // newImg:"",
             dialogVisible: true,
             Buttonshow:true,
             content:null, //富文本
             editorOption: {},
             rules: {
-               consultTopic:[
-                    { required: true, message: '请输入标题', trigger: 'blur' },
+                consultTopic:[
+                    { required: true, message: '请输入新闻标题', trigger: 'blur' },
                 ],
-                updateTime:[
+                synopsis:[
+                     {required: true, message: '请输入新闻描述', trigger: 'blur' },
+                ],
+                startTime:[
                     { type: 'date', required: true, message: '请选择日期', trigger: 'blur' }
                 ],
+
             }
         }
     },
@@ -135,7 +142,7 @@ export default {
                 },
             }).then(res => {
                 console.log(res);
-                this.newImg  =  res.data.msg
+                this.receiveData.consultPic  =  res.data.msg
             }).catch(err => {
                 console.log(err);
 			});
@@ -146,24 +153,20 @@ export default {
 				cancelButtonText: "取消",
 				type: "warning",
 			  }).then(() => {
-                this.receiveData.createTime =  ""
-                this.receiveData.endTime =  ""
-                this.receiveData.startTime =  ""
-                this.receiveData.updateTime =  ""
-                this.receiveData.dateTime = ""
-                this.receiveData.consultPic = this.newImg
+                // this.receiveData.updateTime =  ""
+                // this.receiveData.consultPic = this.newImg
                 if(this.Buttonshow){
                     this.axios.post(this.$api_router.tradeNews+'updateOne',this.receiveData)
                         .then(res=>{
-                            console.log(res)
+                            // console.log(res)
                             if(res.data.code == 200){
                             this.$message({
-                                message: '成功',
+                                message: '更新成功',
                                 type: 'success'
                             });
                             this.receiveData.consultTopic="",
                             this.receiveData.consultSynopsis="",
-                            // this.receiveData.consultPic=""
+                            this.receiveData.consultPic=""
                             this.goBack()
                             this.Queryall()
                         }else{
@@ -177,15 +180,15 @@ export default {
                 }else{
                     this.axios.post(this.$api_router.tradeNews+'saveOne',this.receiveData)
                         .then(res=>{
-                            console.log(res)
+                            // console.log(res)
                             if(res.data.code == 200){
                             this.$message({
-                                message: '成功',
+                                message: '修改成功',
                                 type: 'success'
                             });
                             this.receiveData.consultTopic="",
                             this.receiveData.consultSynopsis="",
-                            // this.receiveData.consultPic=""
+                            this.receiveData.consultPic=""
                             this.goBack()
                             this.Queryall()
                         }else{
@@ -301,7 +304,7 @@ export default {
        
     }
     .Operator-box .bottom .quill-editor .ql-container{
-        height: 280px;
+        height: 260px;
         overflow: auto;
     }
     .Operator-box .button{

@@ -2,7 +2,8 @@
     <div class="TradeNews-box">
         <div class="function">
             <el-input v-model="search.consultTopic" placeholder="新闻标题"></el-input>
-            <el-button type="primary" icon="el-icon-search" plain>搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" plain @click="aboutavto()">搜索</el-button>
+            <el-button type="primary"  plain @click="Reset()">重置筛选</el-button>
             <div class="function-1">
                 <div></div>
                 <el-button type="primary" icon="el-icon-plus" @click="AddData()">新增</el-button>
@@ -12,7 +13,7 @@
         <div class="list">
             <el-table
             v-loading="loading"
-            :data="ftableData"
+            :data="tableData"
             max-height="700"
             style="width:100%">
             <el-table-column
@@ -21,19 +22,24 @@
                 width="180">
             </el-table-column>
             <el-table-column
-                prop="updateTime"
+                prop="startTime"
                 label="日期"
-                width="180">
+                width="150">
             </el-table-column>
             <el-table-column
                 prop="consultTopic"
                 label="新闻标题"
-                width="150">
+                width="200">
+            </el-table-column>
+            <el-table-column
+                prop="synopsis"
+                label="新闻描述"
+                width="300">
             </el-table-column>
             <el-table-column
                 prop="consultSynopsis"
                 label="新闻内容简介"
-                width="300">
+                width="200">
             </el-table-column>
             <el-table-column
                 label="图片"
@@ -47,7 +53,7 @@
              <el-table-column
                 prop="consultBrowse"
                 label="阅读量"
-                width="120">
+                width="100">
             </el-table-column>
            <el-table-column
                 fixed="right"
@@ -93,22 +99,44 @@ export default {
     },
     computed:{
 			//过滤
-			"ftableData":function(){	
-			return this.tableData.filter(row=>{
-				// 默认过滤出来所有内容
-				var flag=true
-				// 对搜索的内容进行循环
-				for(var k in this.search){
-					// 判断搜索的条件不为空，并且搜索的条件不满足的情况下
-					if(!!this.search[k]&&!String(row[k]).includes(this.search[k])){
-						flag=false
-					}
-				}
-				return flag
-			})
-			},
+			// "ftableData":function(){	
+			// return this.tableData.filter(row=>{
+			// 	// 默认过滤出来所有内容
+			// 	var flag=true
+			// 	// 对搜索的内容进行循环
+			// 	for(var k in this.search){
+			// 		// 判断搜索的条件不为空，并且搜索的条件不满足的情况下
+			// 		if(!!this.search[k]&&!String(row[k]).includes(this.search[k])){
+			// 			flag=false
+			// 		}
+			// 	}
+			// 	return flag
+			// })
+			// },
 	},
     methods:{
+        Reset(){
+            this.search.consultTopic=""
+            this.aboutavto()
+        },
+        aboutavto(){
+             this.loading = true
+             this.axios.post(this.$api_router.tradeNews+'list?consultTopic='+this.search.consultTopic+'&currentPage=1&limit=6')
+             .then(res=>{
+                 console.log(res)
+                  if(res.data.code == 200){
+                    this.tableData =  res.data.data.page.dataList
+                    this.pageData =  res.data.data.page
+                    this.loading = false
+                  }else{
+                    this.$message({
+                        message: '无此标题数据',
+                        type: 'warning'
+                    });
+                  }
+                 	
+             })
+        },
         //查询全部
        Queryall(){
             this.axios.post(this.$api_router.tradeNews+'list?currentPage=1&limit=6')
@@ -117,10 +145,10 @@ export default {
                 if(res.data.code == 200){
 						this.tableData =  res.data.data.page.dataList
                         this.pageData =  res.data.data.page
-						this.$message({
-						  message: '查询成功',
-						  type: 'success'
-						});
+						// this.$message({
+						//   message: '查询成功',
+						//   type: 'success'
+						// });
                         this.Dateformatting()
 						this.loading = false
                 }else{
@@ -135,10 +163,10 @@ export default {
        //时间格式化
        Dateformatting(){
                 for(var i=0;i<this.tableData.length;i++){
-                    this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
-                    this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
-                    this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD HH:mm:ss")
-                    this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
+                    // this.tableData[i].createTime = this.moment(this.tableData[i].createTime).format("YYYY-MM-DD HH:mm:ss")
+                    // this.tableData[i].updateTime = this.moment(this.tableData[i].updateTime).format("YYYY-MM-DD HH:mm:ss")
+                 this.tableData[i].startTime = this.moment(this.tableData[i].startTime).format("YYYY-MM-DD")
+                    // this.tableData[i].endTime = this.moment(this.tableData[i].endTime).format("YYYY-MM-DD HH:mm:ss")
                 }
        },
        //新增
@@ -164,6 +192,11 @@ export default {
                     console.log(res)
                     if(res.data.code == 200){
                         row.splice(index, 1);
+                        this.$message({
+						  message: '删除成功',
+						  type: 'success'
+						});
+                        this.Queryall()
                     }else{
                         this.$message({
                             showClose: true,
@@ -182,10 +215,10 @@ export default {
                 if(res.data.code == 200){
 						this.tableData =  res.data.data.page.dataList
                         this.pageData =  res.data.data.page
-						this.$message({
-						  message: '查询成功',
-						  type: 'success'
-						});
+						// this.$message({
+						//   message: '查询成功',
+						//   type: 'success'
+						// });
                         this.Dateformatting()
 						this.loading = false
                 }else{

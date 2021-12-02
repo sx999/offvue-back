@@ -1,5 +1,5 @@
 <template>
-    <el-aside width="200px" :style="{'width':isCollapse ? '64px':'200px','background-color':'#545c64','overflow':'hidden'}">
+    <el-aside width="200px" :style="{'width':isCollapse ? '73px':'200px','background-color':'#545c64','overflow':'hidden'}">
         <el-menu
         :default-active="$route.path"
         class="el-menu-vertical-demo"
@@ -9,7 +9,7 @@
         active-text-color="#ffd04b"
         :router="true">
         <div>
- 			<img src="../assets/images/logo.png" alt="" id="in-img" width="200" style="margin-right: 30px;height: 100px;">
+ 			<img src="../assets/images/logo.png" alt="" id="in-img" width="200" style="margin-right: 30px;height: 80px;">
  		</div>
             <el-menu-item>
                 <i class="el-icon-menu" 
@@ -26,14 +26,14 @@
                 <i class="el-icon-picture"></i>
                 <span slot="title">图片处理</span>
             </el-menu-item>
-            <el-menu-item index="/expert" disabled>
+            <!-- <el-menu-item index="/expert" disabled>
                 <i class="el-icon-s-custom"></i>
                 <span slot="title" disabled>专家顾问</span>
             </el-menu-item>
             <el-menu-item index="/mission" disabled>
                 <i class="el-icon-s-promotion" ></i>
                 <span slot="title">公司使命</span>
-            </el-menu-item>
+            </el-menu-item> -->
             <!-- <el-submenu index="/events">
                 <template slot="title">
                 <i class="el-icon-s-claim"></i>
@@ -98,6 +98,11 @@
 <style scoped>
     .el-menu{
         border-right: 0px !important; 
+      
+    }
+    .el-aside{
+      transition: all .3s;
+      -webkit-transition: all .3s;
     }
    /* .el-menu--collapse{
         width: 70px !important;

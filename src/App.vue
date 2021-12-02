@@ -10,6 +10,4 @@
   #app {
     background-color: #F8F8F8 !important;
   }
-  
-  
 </style>

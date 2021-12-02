@@ -49,8 +49,8 @@ export default {
     .header{
       display: flex;
       align-items: center;
-      width: 98%;
-      margin-left: 30px;
+      width: 100%;
+      margin-left: 10px;
       height: 100px;
       border-radius: 0 0 0 4px;
       box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
@@ -58,9 +58,9 @@ export default {
       
     }
     .center{
-      width: 98%;
-      margin-top: 30px;
-      margin-left: 30px;
+      width: 100%;
+      margin-top: 10px;
+      margin-left: 10px;
       padding: 10px 20px;
       border-radius: 4px 0;
       /* background-color: #dbe6f6; */
