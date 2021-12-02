@@ -15,6 +15,7 @@
             v-loading="loading"
             :data="tableData"
             max-height="700"
+            size="small"
             style="width:100%">
             <el-table-column
                 prop="id"
@@ -29,18 +30,18 @@
             <el-table-column
                 prop="consultTopic"
                 label="新闻标题"
-                width="200">
+                width="500">
             </el-table-column>
             <el-table-column
                 prop="synopsis"
                 label="新闻描述"
-                width="300">
+                width="200">
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 prop="consultSynopsis"
                 label="新闻内容简介"
                 width="200">
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
                 label="图片"
                 width="200">
@@ -53,7 +54,7 @@
              <el-table-column
                 prop="consultBrowse"
                 label="阅读量"
-                width="100">
+                width="80">
             </el-table-column>
            <el-table-column
                 fixed="right"
