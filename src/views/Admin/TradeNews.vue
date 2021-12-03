@@ -13,10 +13,16 @@
         <div class="list">
             <el-table
             v-loading="loading"
-            :data="tableData"
+            :data="rowData"
             max-height="700"
             size="small"
+      
             style="width:100%">
+             <el-table-column
+            label="序号"
+            type="index"
+            >
+            </el-table-column>
             <el-table-column
                 prop="id"
                 label="ID"
@@ -25,6 +31,7 @@
             <el-table-column
                 prop="startTime"
                 label="日期"
+              
                 width="150">
             </el-table-column>
             <el-table-column
@@ -99,6 +106,13 @@ export default {
           this.Queryall()
     },
     computed:{
+            //排序
+            // "rowData":function(){	
+            //     return  this.tableData.sort((b,a) => {
+            //      return    Date.parse(a.startTime) - Date.parse(b.startTime);//时间正序
+            //     });	
+            // }
+      
 			//过滤
 			// "ftableData":function(){	
 			// return this.tableData.filter(row=>{
@@ -114,6 +128,7 @@ export default {
 			// 	return flag
 			// })
 			// },
+            
 	},
     methods:{
         Reset(){
@@ -140,7 +155,8 @@ export default {
         },
         //查询全部
        Queryall(){
-            this.axios.post(this.$api_router.tradeNews+'list?currentPage=1&limit=6')
+            this.loading=true
+            this.axios.post(this.$api_router.tradeNews+'list?currentPage=1&limit=10')
             .then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
@@ -210,7 +226,7 @@ export default {
        //分页
        getLista(event){
             console.log(event)
-             this.axios.post(this.$api_router.tradeNews+'list?currentPage='+event+'&limit=6')
+             this.axios.post(this.$api_router.tradeNews+'list?currentPage='+event+'&limit=10')
             .then(res=>{
                 console.log(res)
                 if(res.data.code == 200){
