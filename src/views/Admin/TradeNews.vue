@@ -107,11 +107,11 @@ export default {
     },
     computed:{
             //排序
-            // "rowData":function(){	
-            //     return  this.tableData.sort((b,a) => {
-            //      return    Date.parse(a.startTime) - Date.parse(b.startTime);//时间正序
-            //     });	
-            // }
+            "rowData":function(){	
+                return  this.tableData.sort((b,a) => {
+                 return    Date.parse(a.startTime) - Date.parse(b.startTime);//时间正序
+                });	
+            }
       
 			//过滤
 			// "ftableData":function(){	
